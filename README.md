@@ -15,7 +15,7 @@ URL final prevista: **https://lovelyx-del.github.io**
 | Archivo o dato | Dónde va | Cómo conseguirlo |
 |---|---|---|
 | `foto-perfil.jpg` (cuadrada, ~600 px) | `assets/` | Foto propia, fondo liso. Si falta, se ven las iniciales |
-| 5 links públicos de Credly (Cisco) | `index.html`, los 5 `href="#" data-pendiente` | credly.com → cada insignia → *Share* → *Copy link*. Poné la URL y borrá `data-pendiente` |
+| 5 links públicos de Credly (Cisco) | `index.html`, dentro de `<div class="cert-actions">` de cada tarjeta de Cisco | credly.com → cada insignia → *Share* → *Copy link*. Agregá `<a class="link" href="URL" target="_blank" rel="noopener">Credly</a>` |
 | Repo de LibreMax (opcional) | Tarjeta LibreMax en Proyectos | Solo si se publica el código |
 
 **No subir:** nada con DNI, teléfono, dirección o fecha de nacimiento. Los PDF de Streambe originales (módulos 1-4 y general) tienen el DNI: usar solo la versión tapada.
