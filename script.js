@@ -27,7 +27,7 @@ document.querySelectorAll("button[data-src]").forEach((btn) => {
   btn.addEventListener("click", () => {
     const src = btn.dataset.src;
     title.textContent = btn.dataset.title || "Certificado";
-    openLink.href = src;
+    openLink.href = btn.dataset.pdf || src;   // el PDF original, si existe
     body.replaceChildren();
     if (/\.(png|jpe?g|webp|avif)$/i.test(src)) {
       const img = document.createElement("img");
