@@ -21,7 +21,7 @@ document.querySelectorAll("button[data-src]").forEach((btn) => {
     .then((r) => { if (!r.ok) throw new Error(); })
     .catch(() => {
       btn.disabled = true;
-      btn.textContent = "Certificado pendiente";
+      btn.textContent = "Pendiente";
     });
 
   btn.addEventListener("click", () => {
@@ -51,7 +51,7 @@ viewer.addEventListener("close", () => body.replaceChildren());
 // Aparición suave al hacer scroll (se desactiva con reduced motion)
 const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 if (!reduce && "IntersectionObserver" in window) {
-  const items = document.querySelectorAll(".section-head, .card, .in-progress");
+  const items = document.querySelectorAll(".desktop > .window:not(:first-child)");
   items.forEach((el) => el.classList.add("reveal"));
   const io = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {

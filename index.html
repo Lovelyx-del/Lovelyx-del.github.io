@@ -3,268 +3,330 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Santiago Cuenca Cabrera · Portafolio</title>
-  <meta name="description" content="Portafolio de Santiago Cuenca Cabrera: técnico en Informática, redes Cisco, IoT y proyectos con IA.">
-  <meta name="theme-color" content="#0F172A">
+  <title>Santiago Cuenca Cabrera · Soporte técnico y atención al cliente</title>
+  <meta name="description" content="Santiago Cuenca Cabrera, Técnico en Informática Profesional y Personal: soporte técnico N1, atención al cliente y redes Cisco. Resistencia, Chaco.">
+  <meta name="theme-color" content="#008080">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=Work+Sans:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=VT323&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <a class="skip-link" href="#main">Saltar al contenido</a>
 
-  <!-- ============ NAVEGACIÓN ============ -->
-  <header class="site-header">
-    <nav class="nav container" aria-label="Principal">
-      <a class="brand" href="#inicio" aria-label="Inicio">SC<span class="brand-dot">.</span></a>
+  <!-- ============ BARRA DE TAREAS (navegación) ============ -->
+  <header class="taskbar">
+    <nav class="taskbar-inner" aria-label="Principal">
+      <a class="start-btn" href="#inicio"><span class="start-logo" aria-hidden="true"></span>SC</a>
       <ul class="nav-links">
         <li><a href="#sobre-mi">Sobre mí</a></li>
-        <li><a href="#certificaciones">Certificaciones</a></li>
+        <li><a href="#certificaciones">Certificados</a></li>
         <li><a href="#proyectos">Proyectos</a></li>
         <li><a href="#contacto">Contacto</a></li>
       </ul>
     </nav>
   </header>
 
-  <main id="main">
+  <main id="main" class="desktop">
     <!-- ============ INICIO ============ -->
-    <section id="inicio" class="hero">
-      <div class="container hero-grid">
+    <section id="inicio" class="window window-hero" aria-labelledby="titulo-inicio">
+      <div class="title-bar">
+        <span class="title-text">perfil.exe</span>
+        <span class="title-controls" aria-hidden="true"><i></i><i></i><i></i></span>
+      </div>
+      <div class="window-body hero-grid">
         <div class="hero-photo">
-          <div class="orbit" aria-hidden="true"></div>
           <!-- Foto: guardá tu imagen como assets/foto-perfil.jpg (cuadrada, ~600 px). Si falta, se muestran las iniciales. -->
-          <img src="assets/foto-perfil.jpg" alt="Foto de perfil de Santiago Cuenca Cabrera" width="240" height="240"
+          <img src="assets/foto-perfil.jpg" alt="Foto de perfil de Santiago Cuenca Cabrera" width="200" height="200"
                onerror="this.hidden=true; this.nextElementSibling.hidden=false;">
           <span class="avatar-fallback" hidden aria-hidden="true">SC</span>
         </div>
 
         <div class="hero-text">
-          <p class="eyebrow">Resistencia, Chaco · Argentina</p>
-          <h1>Santiago Cuenca Cabrera</h1>
-          <p class="hero-role">Técnico en Informática <span class="sep">/</span> Redes Cisco <span class="sep">/</span> IoT y automatización</p>
-          <p class="hero-lead">Instalo, configuro y doy soporte a equipos y redes. Me formo en redes con Cisco Networking Academy y en programación con IA, y desarrollo proyectos de IoT.</p>
-          <div class="hero-cta">
-            <a class="btn btn-primary" href="#certificaciones">Ver certificaciones</a>
-            <a class="btn btn-ghost" href="#contacto">Contacto</a>
+          <h1 id="titulo-inicio">Santiago Cuenca Cabrera</h1>
+          <div class="crt" role="group" aria-label="Resumen del perfil">
+            <p><span class="prompt">C:\&gt;</span> whoami</p>
+            <p class="out">Técnico en Informática Profesional y Personal · Resistencia, Chaco</p>
+            <p><span class="prompt">C:\&gt;</span> puesto --busco</p>
+            <p class="out">Soporte técnico N1 · Atención al cliente · Mesa de ayuda</p>
+            <p><span class="prompt">C:\&gt;</span> fortalezas</p>
+            <p class="out">Diagnóstico de PC y conectividad · Redes Cisco · Trato con el público</p>
+            <p><span class="prompt">C:\&gt;</span><span class="cursor" aria-hidden="true"></span></p>
           </div>
-          <ul class="stats" aria-label="Resumen">
-            <li><strong>5</strong><span>credenciales Cisco</span></li>
-            <li><strong>80 h</strong><span>Programación con IA</span></li>
-            <li><strong>3</strong><span>proyectos técnicos</span></li>
-          </ul>
+          <div class="hero-cta">
+            <a class="btn btn-default" href="#certificaciones">Ver certificados</a>
+            <a class="btn" href="#contacto">Contactarme</a>
+          </div>
         </div>
+      </div>
+      <div class="status-bar">
+        <span>Disponible: part-time</span>
+        <span>Egreso: dic. 2026</span>
+        <span class="status-ok">● En línea</span>
       </div>
     </section>
 
     <!-- ============ SOBRE MÍ ============ -->
-    <section id="sobre-mi" class="section">
-      <div class="container">
-        <header class="section-head">
-          <p class="kicker">01</p>
-          <h2>Sobre mí</h2>
-        </header>
+    <section id="sobre-mi" class="window" aria-labelledby="titulo-sobre">
+      <div class="title-bar">
+        <h2 id="titulo-sobre" class="title-text">sobre_mi.txt</h2>
+        <span class="title-controls" aria-hidden="true"><i></i><i></i><i></i></span>
+      </div>
+      <div class="window-body about-grid">
+        <div class="about-text">
+          <h3>Técnico en Informática Profesional y Personal</h3>
+          <p>Termino en diciembre de 2026 la orientación técnica de 6 años de la <strong>E.E.T. N.º 24 "Simón de Iriondo"</strong>. La orientación forma para:</p>
+          <ul class="checklist">
+            <li>instalar, mantener y dar soporte a equipos y redes;</li>
+            <li>diagnosticar y resolver problemas informáticos;</li>
+            <li>asesorar a clientes sobre productos y servicios de informática.</li>
+          </ul>
 
-        <div class="about-grid">
-          <div class="about-text">
-            <p>Estoy en 6.º año de la <strong>E.E.T. N.º 24 "Simón de Iriondo"</strong> (Técnico en Informática Profesional y Personal), con egreso en diciembre de 2026. La orientación abarca la instalación, el mantenimiento y el soporte de equipos y redes, y la resolución de problemas informáticos.</p>
-            <p>Trabajo en atención al público, caja y stock en una librería, donde también digitalicé el catálogo (~400 artículos) y colaboro con las redes sociales de la marca. Desde marzo de 2027 curso <strong>Ingeniería Electromecánica</strong>.</p>
-          </div>
-
-          <aside class="card about-card" aria-label="Habilidades">
-            <h3>Habilidades</h3>
-            <ul class="chips">
-              <li>Soporte técnico</li>
-              <li>Redes (Cisco)</li>
-              <li>Direccionamiento IP</li>
-              <li>IoT · Raspberry Pi</li>
-              <li>Automatización industrial</li>
-              <li>Node.js · SQLite</li>
-              <li>Google Workspace · Excel</li>
-              <li>Atención al cliente</li>
-              <li>Trabajo en equipo</li>
-            </ul>
-          </aside>
+          <h3>Experiencia con clientes</h3>
+          <p><strong>Atención al público, caja y stock</strong> en la librería LibreMax (part-time, actualidad): atiendo consultas, cobro en caja y controlo el stock. Además digitalicé el catálogo (~400 artículos) y colaboro con las redes sociales del comercio.</p>
+          <p>Desde marzo de 2027 curso Ingeniería Electromecánica, por lo que busco un puesto part-time estable.</p>
         </div>
+
+        <aside class="panel sunken" aria-label="Habilidades">
+          <h3>Habilidades</h3>
+          <ul class="skill-list">
+            <li>Soporte técnico N1</li>
+            <li>Diagnóstico de PC y conectividad</li>
+            <li>Atención al cliente</li>
+            <li>Redes: TCP/IP, direccionamiento</li>
+            <li>Configuración de dispositivos de red</li>
+            <li>Caja y control de stock</li>
+            <li>Google Workspace · Excel</li>
+            <li>IoT · Raspberry Pi</li>
+            <li>Trabajo en equipo</li>
+          </ul>
+        </aside>
       </div>
     </section>
 
-    <!-- ============ CERTIFICACIONES ============ -->
-    <!-- Para cada certificado: completá data-src (PDF o imagen en assets/certs/) y el href de Credly.
-         Antes de subir un PDF, tapá DNI, fecha de nacimiento y cualquier dato personal. -->
-    <section id="certificaciones" class="section section-alt">
-      <div class="container">
-        <header class="section-head">
-          <p class="kicker">02</p>
-          <h2>Certificaciones</h2>
-          <p class="section-sub">Credenciales verificables. Tocá «Ver certificado» para abrirlo acá mismo.</p>
-        </header>
+    <!-- ============ CERTIFICADOS ============ -->
+    <!-- Para cada certificado: data-src apunta al PDF o imagen en assets/certs/.
+         Antes de subir uno, tapá DNI, fecha de nacimiento y cualquier dato personal. -->
+    <section id="certificaciones" class="window" aria-labelledby="titulo-cert">
+      <div class="title-bar">
+        <h2 id="titulo-cert" class="title-text">certificados</h2>
+        <span class="title-controls" aria-hidden="true"><i></i><i></i><i></i></span>
+      </div>
+      <div class="window-body">
+        <p class="lead">Credenciales verificables. Tocá «Ver» para abrir cada certificado acá mismo.</p>
 
+        <h3 class="group-title">Redes y soporte · Cisco Networking Academy</h3>
         <div class="cert-grid">
-          <article class="card cert">
-            <div class="cert-top"><img class="badge" src="assets/certs/insignias/network-technician.png" alt="" width="56" height="56" loading="lazy"><span class="issuer issuer-cisco">Cisco NetAcad</span><time datetime="2026-11">nov. 2026</time></div>
-            <h3>Network Technician Career Path</h3>
-            <p>Examen de la carrera de Técnico en Redes. Certificado e insignia digital.</p>
-            <div class="cert-actions">
-              <button class="btn btn-small" type="button" data-src="assets/certs/cisco-network-technician.pdf" data-title="Network Technician Career Path">Ver certificado</button>
-              <a class="link-ext" href="#" data-pendiente>Credly</a>
+          <article class="cert">
+            <img class="badge" src="assets/certs/insignias/network-technician.png" alt="" width="64" height="64" loading="lazy">
+            <div class="cert-info">
+              <h4>Network Technician Career Path</h4>
+              <p>Examen de la carrera de Técnico en Redes · nov. 2026</p>
+              <div class="cert-actions">
+                <button class="btn btn-small" type="button" data-src="assets/certs/cisco-network-technician.pdf" data-title="Network Technician Career Path">Ver</button>
+                <a class="link-ext" href="#" data-pendiente>Credly</a>
+              </div>
             </div>
           </article>
 
-          <article class="card cert">
-            <div class="cert-top"><img class="badge" src="assets/certs/insignias/network-support-security.png" alt="" width="56" height="56" loading="lazy"><span class="issuer issuer-cisco">Cisco NetAcad</span><time datetime="2026-11">nov. 2026</time></div>
-            <h3>Soporte y Seguridad de Red</h3>
-            <p>Network Support and Security. Certificado e insignia digital.</p>
-            <div class="cert-actions">
-              <button class="btn btn-small" type="button" data-src="assets/certs/cisco-network-support-security.pdf" data-title="Soporte y Seguridad de Red">Ver certificado</button>
-              <a class="link-ext" href="#" data-pendiente>Credly</a>
+          <article class="cert">
+            <img class="badge" src="assets/certs/insignias/network-support-security.png" alt="" width="64" height="64" loading="lazy">
+            <div class="cert-info">
+              <h4>Soporte y Seguridad de Red</h4>
+              <p>Network Support and Security · nov. 2026</p>
+              <div class="cert-actions">
+                <button class="btn btn-small" type="button" data-src="assets/certs/cisco-network-support-security.pdf" data-title="Soporte y Seguridad de Red">Ver</button>
+                <a class="link-ext" href="#" data-pendiente>Credly</a>
+              </div>
             </div>
           </article>
 
-          <article class="card cert">
-            <div class="cert-top"><img class="badge" src="assets/certs/insignias/network-addressing.png" alt="" width="56" height="56" loading="lazy"><span class="issuer issuer-cisco">Cisco NetAcad</span><time datetime="2026-09">sep. 2026</time></div>
-            <h3>Direccionamiento de Red y Solución de Problemas Básicos</h3>
-            <p>Network Addressing and Basic Troubleshooting. Certificado e insignia digital.</p>
-            <div class="cert-actions">
-              <button class="btn btn-small" type="button" data-src="assets/certs/cisco-network-addressing.pdf" data-title="Direccionamiento de Red y Solución de Problemas Básicos">Ver certificado</button>
-              <a class="link-ext" href="#" data-pendiente>Credly</a>
+          <article class="cert">
+            <img class="badge" src="assets/certs/insignias/network-addressing.png" alt="" width="64" height="64" loading="lazy">
+            <div class="cert-info">
+              <h4>Direccionamiento de Red y Solución de Problemas Básicos</h4>
+              <p>Network Addressing and Basic Troubleshooting · sep. 2026</p>
+              <div class="cert-actions">
+                <button class="btn btn-small" type="button" data-src="assets/certs/cisco-network-addressing.pdf" data-title="Direccionamiento de Red y Solución de Problemas Básicos">Ver</button>
+                <a class="link-ext" href="#" data-pendiente>Credly</a>
+              </div>
             </div>
           </article>
 
-          <article class="card cert">
-            <div class="cert-top"><img class="badge" src="assets/certs/insignias/networking-devices.png" alt="" width="56" height="56" loading="lazy"><span class="issuer issuer-cisco">Cisco NetAcad</span><time datetime="2026-08">ago. 2026</time></div>
-            <h3>Dispositivos de Red y Configuración Inicial</h3>
-            <p>Networking Devices and Initial Configuration. Certificado e insignia digital.</p>
-            <div class="cert-actions">
-              <button class="btn btn-small" type="button" data-src="assets/certs/cisco-networking-devices.pdf" data-title="Dispositivos de Red y Configuración Inicial">Ver certificado</button>
-              <a class="link-ext" href="#" data-pendiente>Credly</a>
+          <article class="cert">
+            <img class="badge" src="assets/certs/insignias/networking-devices.png" alt="" width="64" height="64" loading="lazy">
+            <div class="cert-info">
+              <h4>Dispositivos de Red y Configuración Inicial</h4>
+              <p>Networking Devices and Initial Configuration · ago. 2026</p>
+              <div class="cert-actions">
+                <button class="btn btn-small" type="button" data-src="assets/certs/cisco-networking-devices.pdf" data-title="Dispositivos de Red y Configuración Inicial">Ver</button>
+                <a class="link-ext" href="#" data-pendiente>Credly</a>
+              </div>
             </div>
           </article>
 
-          <article class="card cert">
-            <div class="cert-top"><img class="badge" src="assets/certs/insignias/networking-basics.png" alt="" width="56" height="56" loading="lazy"><span class="issuer issuer-cisco">Cisco NetAcad</span><time datetime="2026-07">jul. 2026</time></div>
-            <h3>Conceptos Básicos de Redes</h3>
-            <p>Networking Basics. Certificado e insignia digital.</p>
-            <div class="cert-actions">
-              <button class="btn btn-small" type="button" data-src="assets/certs/cisco-networking-basics.pdf" data-title="Conceptos Básicos de Redes">Ver certificado</button>
-              <a class="link-ext" href="#" data-pendiente>Credly</a>
-            </div>
-          </article>
-
-          <article class="card cert">
-            <div class="cert-top"><span class="issuer issuer-ai">Streambe</span><time datetime="2026-11">nov. 2026</time></div>
-            <h3>Programación con IA: Stage 2</h3>
-            <p>Generación T. Trayecto de 80 h en 6 meses, 4 módulos aprobados: fundamentos de IA, programación inicial y avanzada, y proyectos reales.</p>
-            <div class="cert-actions">
-              <button class="btn btn-small" type="button" data-src="assets/certs/streambe-programacion-ia.png" data-title="Programación con IA: Stage 2">Ver certificado</button>
-            </div>
-          </article>
-
-          <article class="card cert">
-            <div class="cert-top"><span class="issuer issuer-google">Google Actívate</span><time datetime="2024-12-07">dic. 2024</time></div>
-            <h3>Competencias digitales para profesionales</h3>
-            <p>Herramientas digitales y productividad para el trabajo. ID de finalización: 340520569.</p>
-            <div class="cert-actions">
-              <button class="btn btn-small" type="button" data-src="assets/certs/google-competencias-digitales.pdf" data-title="Competencias digitales para profesionales">Ver certificado</button>
-            </div>
-          </article>
-
-          <article class="card cert">
-            <div class="cert-top"><span class="issuer issuer-google">Google · Skillshop</span><time datetime="2024-10-26">oct. 2024</time></div>
-            <h3>Fundamentals of Digital Marketing</h3>
-            <p>Google Digital Academy: bases del marketing digital. ID de finalización: 325905091.</p>
-            <div class="cert-actions">
-              <button class="btn btn-small" type="button" data-src="assets/certs/google-digital-marketing.pdf" data-title="Fundamentals of Digital Marketing">Ver certificado</button>
+          <article class="cert">
+            <img class="badge" src="assets/certs/insignias/networking-basics.png" alt="" width="64" height="64" loading="lazy">
+            <div class="cert-info">
+              <h4>Conceptos Básicos de Redes</h4>
+              <p>Networking Basics · jul. 2026</p>
+              <div class="cert-actions">
+                <button class="btn btn-small" type="button" data-src="assets/certs/cisco-networking-basics.pdf" data-title="Conceptos Básicos de Redes">Ver</button>
+                <a class="link-ext" href="#" data-pendiente>Credly</a>
+              </div>
             </div>
           </article>
         </div>
 
-        <div class="in-progress">
+        <h3 class="group-title">Programación con IA · Generación T / Streambe</h3>
+        <div class="cert-grid">
+          <article class="cert cert-wide">
+            <span class="file-icon" aria-hidden="true">IA</span>
+            <div class="cert-info">
+              <h4>Programación con IA: Stage 2</h4>
+              <p>Trayecto de 80 h en 6 meses, con los 4 módulos aprobados · nov. 2026</p>
+              <div class="cert-actions">
+                <button class="btn btn-small" type="button" data-src="assets/certs/streambe-programacion-ia.png" data-title="Programación con IA: Stage 2">Ver</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="cert">
+            <span class="file-icon" aria-hidden="true">M1</span>
+            <div class="cert-info">
+              <h4>Mod 1 Streambe</h4>
+              <p>IA-First: fundamentos de IA · sep. 2026</p>
+              <div class="cert-actions">
+                <button class="btn btn-small" type="button" data-src="assets/certs/streambe-mod1.png" data-title="Mod 1 Streambe: IA-First">Ver</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="cert">
+            <span class="file-icon" aria-hidden="true">M2</span>
+            <div class="cert-info">
+              <h4>Mod 2 Streambe</h4>
+              <p>Programación con IA, nivel inicial · sep. 2026</p>
+              <div class="cert-actions">
+                <button class="btn btn-small" type="button" data-src="assets/certs/streambe-mod2.png" data-title="Mod 2 Streambe: Programación con IA, nivel inicial">Ver</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="cert">
+            <span class="file-icon" aria-hidden="true">M3</span>
+            <div class="cert-info">
+              <h4>Mod 3 Streambe</h4>
+              <p>Programación con IA, nivel avanzado · oct. 2026</p>
+              <div class="cert-actions">
+                <button class="btn btn-small" type="button" data-src="assets/certs/streambe-mod3.png" data-title="Mod 3 Streambe: Programación con IA, nivel avanzado">Ver</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="cert">
+            <span class="file-icon" aria-hidden="true">M4</span>
+            <div class="cert-info">
+              <h4>Mod 4 Streambe</h4>
+              <p>Desarrollo de proyectos reales · nov. 2026</p>
+              <div class="cert-actions">
+                <button class="btn btn-small" type="button" data-src="assets/certs/streambe-mod4.png" data-title="Mod 4 Streambe: Desarrollo de proyectos reales">Ver</button>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <h3 class="group-title">Herramientas digitales · Google</h3>
+        <div class="cert-grid">
+          <article class="cert">
+            <span class="file-icon" aria-hidden="true">G</span>
+            <div class="cert-info">
+              <h4>Competencias digitales para profesionales</h4>
+              <p>Google Actívate · dic. 2024 · ID 340520569</p>
+              <div class="cert-actions">
+                <button class="btn btn-small" type="button" data-src="assets/certs/google-competencias-digitales.pdf" data-title="Competencias digitales para profesionales">Ver</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="cert">
+            <span class="file-icon" aria-hidden="true">G</span>
+            <div class="cert-info">
+              <h4>Fundamentals of Digital Marketing</h4>
+              <p>Google Digital Academy · oct. 2024 · ID 325905091</p>
+              <div class="cert-actions">
+                <button class="btn btn-small" type="button" data-src="assets/certs/google-digital-marketing.pdf" data-title="Fundamentals of Digital Marketing">Ver</button>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <div class="panel sunken in-progress">
           <h3>En curso</h3>
           <ul>
-            <li><span class="dot" aria-hidden="true"></span>Automatización Industrial · Schneider Electric University</li>
-            <li><span class="dot" aria-hidden="true"></span>Delivering Exceptional Customer Support · HubSpot Academy</li>
-            <li><span class="dot" aria-hidden="true"></span>Introducción al Sistema de Riesgos del Trabajo · SRT</li>
+            <li>Delivering Exceptional Customer Support · HubSpot Academy</li>
+            <li>Automatización Industrial · Schneider Electric University</li>
+            <li>Introducción al Sistema de Riesgos del Trabajo · SRT</li>
           </ul>
         </div>
       </div>
     </section>
 
     <!-- ============ PROYECTOS ============ -->
-    <section id="proyectos" class="section">
-      <div class="container">
-        <header class="section-head">
-          <p class="kicker">03</p>
-          <h2>Proyectos destacados</h2>
-        </header>
+    <section id="proyectos" class="window" aria-labelledby="titulo-proy">
+      <div class="title-bar">
+        <h2 id="titulo-proy" class="title-text">proyectos</h2>
+        <span class="title-controls" aria-hidden="true"><i></i><i></i><i></i></span>
+      </div>
+      <div class="window-body project-grid">
+        <article class="panel raised project">
+          <p class="project-type">IoT · Trabajo en equipo</p>
+          <h3>CowControl</h3>
+          <p>Conteo de ganado con lectores RFID y una Raspberry Pi que envían los datos a una base en la nube, consultada desde una app móvil.</p>
+          <ul class="tags"><li>RFID</li><li>Raspberry Pi</li><li>Flutter</li><li>Nube</li></ul>
+          <a class="link-ext" href="https://github.com/Lovelyx-del/cowcontrol-app" target="_blank" rel="noopener">Repositorio</a>
+        </article>
 
-        <div class="project-grid">
-          <article class="card project project-featured">
-            <!-- Captura opcional: assets/proyectos/cowcontrol.jpg -->
-            <div class="project-media media-iot" aria-hidden="true">
-              <svg viewBox="0 0 24 24" class="icon-lg"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 14h3M1 9h3M1 14h3"/></svg>
-            </div>
-            <div class="project-body">
-              <p class="project-type">IoT · Trabajo en equipo</p>
-              <h3>CowControl</h3>
-              <p>Conteo de ganado con lectores RFID y una Raspberry Pi que envían los datos a una base en la nube, consultada desde una app móvil.</p>
-              <ul class="tags"><li>RFID</li><li>Raspberry Pi</li><li>Flutter</li><li>Base de datos en la nube</li></ul>
-              <a class="link-ext" href="https://github.com/Lovelyx-del/cowcontrol-app" target="_blank" rel="noopener">Repositorio</a>
-            </div>
-          </article>
+        <article class="panel raised project">
+          <p class="project-type">Backend · Proyecto final</p>
+          <h3>Sitio de la Space Week 2026</h3>
+          <p>Sitio con backend para la Space Week de la E.E.T. N.º 24, con panel de administración y tests automatizados.</p>
+          <ul class="tags"><li>Node.js</li><li>Fastify</li><li>SQLite</li><li>Tests</li></ul>
+          <a class="link-ext" href="https://github.com/Lovelyx-del/StreambeSWA_Cuenca" target="_blank" rel="noopener">Repositorio</a>
+        </article>
 
-          <article class="card project">
-            <div class="project-media media-web" aria-hidden="true">
-              <svg viewBox="0 0 24 24" class="icon-lg"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Z"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg>
-            </div>
-            <div class="project-body">
-              <p class="project-type">Backend · Proyecto final</p>
-              <h3>Sitio de la Space Week 2026</h3>
-              <p>Sitio con backend para la Space Week de la E.E.T. N.º 24, con panel de administración y tests automatizados.</p>
-              <ul class="tags"><li>Node.js</li><li>Fastify</li><li>SQLite</li><li>Tests</li></ul>
-              <a class="link-ext" href="https://github.com/Lovelyx-del/StreambeSWA_Cuenca" target="_blank" rel="noopener">Repositorio</a>
-            </div>
-          </article>
-
-          <article class="card project">
-            <div class="project-media media-shop" aria-hidden="true">
-              <svg viewBox="0 0 24 24" class="icon-lg"><path d="M3 9l1.5-5h15L21 9M3 9h18M3 9v11h18V9M9 20v-6h6v6"/></svg>
-            </div>
-            <div class="project-body">
-              <p class="project-type">Web · Comercio local</p>
-              <h3>LibreMax</h3>
-              <p>Aplicación web con el catálogo de productos (~400 artículos) y la gestión de redes sociales de una librería.</p>
-              <ul class="tags"><li>Web</li><li>Catálogo</li><li>Redes sociales</li></ul>
-            </div>
-          </article>
-        </div>
+        <article class="panel raised project">
+          <p class="project-type">Web · Comercio local</p>
+          <h3>LibreMax</h3>
+          <p>Catálogo web de productos (~400 artículos) y gestión de las redes sociales de la librería donde trabajo.</p>
+          <ul class="tags"><li>Web</li><li>Catálogo</li><li>Redes sociales</li></ul>
+        </article>
       </div>
     </section>
 
     <!-- ============ CONTACTO ============ -->
-    <section id="contacto" class="section section-alt">
-      <div class="container contact">
-        <header class="section-head">
-          <p class="kicker">04</p>
-          <h2>Contacto</h2>
-          <p class="section-sub">Escribime por email o por LinkedIn.</p>
-        </header>
-
+    <section id="contacto" class="window" aria-labelledby="titulo-cont">
+      <div class="title-bar">
+        <h2 id="titulo-cont" class="title-text">contacto</h2>
+        <span class="title-controls" aria-hidden="true"><i></i><i></i><i></i></span>
+      </div>
+      <div class="window-body">
+        <p class="lead">Escribime por email o por LinkedIn.</p>
         <ul class="contact-list">
           <li>
-            <a class="card contact-item" href="mailto:santiagoargentote18@gmail.com">
-              <svg viewBox="0 0 24 24" class="icon" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>
+            <a class="panel raised contact-item" href="mailto:santiagoargentote18@gmail.com">
+              <svg viewBox="0 0 24 24" class="icon" aria-hidden="true"><rect x="2" y="4" width="20" height="16"/><path d="m22 7-10 6L2 7"/></svg>
               <span><strong>Email</strong><small>santiagoargentote18@gmail.com</small></span>
             </a>
           </li>
           <li>
-            <a class="card contact-item" href="https://www.linkedin.com/in/santiago-cuenca-cabrera-038031333" target="_blank" rel="noopener">
-              <svg viewBox="0 0 24 24" class="icon" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="3"/><path d="M7 10v7M7 7v.01M11 17v-4a2 2 0 0 1 4 0v4M11 10v7"/></svg>
+            <a class="panel raised contact-item" href="https://www.linkedin.com/in/santiago-cuenca-cabrera-038031333" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" class="icon" aria-hidden="true"><rect x="2" y="2" width="20" height="20"/><path d="M7 10v7M7 7v.01M11 17v-4a2 2 0 0 1 4 0v4M11 10v7"/></svg>
               <span><strong>LinkedIn</strong><small>santiago-cuenca-cabrera</small></span>
             </a>
           </li>
           <li>
-            <a class="card contact-item" href="https://github.com/Lovelyx-del" target="_blank" rel="noopener">
+            <a class="panel raised contact-item" href="https://github.com/Lovelyx-del" target="_blank" rel="noopener">
               <svg viewBox="0 0 24 24" class="icon" aria-hidden="true"><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12 12 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>
               <span><strong>GitHub</strong><small>Lovelyx-del</small></span>
             </a>
@@ -272,21 +334,17 @@
         </ul>
       </div>
     </section>
+
+    <footer class="site-footer">
+      <p>© <span id="year">2026</span> Santiago Cuenca Cabrera · HTML + CSS en GitHub Pages</p>
+    </footer>
   </main>
 
-  <footer class="site-footer">
-    <div class="container">
-      <p>© <span id="year">2026</span> Santiago Cuenca Cabrera · Hecho con HTML y CSS, publicado en GitHub Pages.</p>
-    </div>
-  </footer>
-
   <!-- Visor de certificados (PDF o imagen) -->
-  <dialog id="cert-viewer" aria-labelledby="viewer-title">
-    <div class="viewer-head">
-      <h2 id="viewer-title">Certificado</h2>
-      <button type="button" class="viewer-close" aria-label="Cerrar">
-        <svg viewBox="0 0 24 24" class="icon" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
-      </button>
+  <dialog id="cert-viewer" class="window" aria-labelledby="viewer-title">
+    <div class="title-bar">
+      <h2 id="viewer-title" class="title-text">Certificado</h2>
+      <button type="button" class="viewer-close" aria-label="Cerrar">×</button>
     </div>
     <div class="viewer-body"></div>
     <p class="viewer-foot"><a class="link-ext" href="#" target="_blank" rel="noopener">Abrir en otra pestaña</a></p>
