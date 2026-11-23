@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LibreMax — Catálogo (demo)</title>
+<style>
+  :root {
+    --azul: #1f4e79; --azul-claro: #2e6da4; --gris: #f4f5f7;
+    --borde: #d9dce1; --texto: #222; --verde: #2e7d32; --rojo: #c62828;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', Tahoma, Arial, sans-serif; margin: 0;
+    background: var(--gris); color: var(--texto); font-size: 15px;
+  }
+  header {
+    background: var(--azul); color: #fff; padding: 12px 18px;
+    display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+    position: sticky; top: 0; z-index: 20;
+  }
+  header h1 { font-size: 20px; margin: 0; letter-spacing: .5px; }
+  header .stats { font-size: 13px; opacity: .9; margin-left: auto; }
+  /* pestañas */
+  .tabs { display: flex; gap: 4px; background: var(--azul); padding: 0 18px; position: sticky; top: 52px; z-index: 19; }
+  .tab { padding: 10px 18px; color: #cdd9e6; cursor: pointer; border: none; background: none; font-size: 15px; border-bottom: 3px solid transparent; }
+  .tab.activa { color: #fff; border-bottom-color: #fff; font-weight: 600; }
+  .vista { display: none; }
+  .vista.activa { display: block; }
+
+  .barra {
+    display: flex; gap: 10px; padding: 12px 18px; flex-wrap: wrap;
+    align-items: center; background: #fff; border-bottom: 1px solid var(--borde);
+    position: sticky; top: 95px; z-index: 18;
+  }
+  #buscar {
+    flex: 1; min-width: 200px; padding: 10px 12px; font-size: 16px;
+    border: 2px solid var(--borde); border-radius: 8px;
+  }
+  #buscar:focus { outline: none; border-color: var(--azul-claro); }
+  select, button {
+    padding: 9px 12px; font-size: 14px; border-radius: 8px;
+    border: 1px solid var(--borde); background: #fff; cursor: pointer;
+  }
+  button.primario { background: var(--azul); color: #fff; border-color: var(--azul); }
+  button.primario:hover { background: var(--azul-claro); }
+  button.peligro { color: var(--rojo); border-color: #e0b4b4; }
+  .contenido { padding: 12px 18px 60px; }
+  table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; }
+  th, td { padding: 9px 12px; text-align: left; border-bottom: 1px solid var(--borde); }
+  th { background: #eef1f5; position: sticky; top: 147px; cursor: pointer; user-select: none; font-size: 13px; }
+  th:hover { background: #e2e7ee; }
+  tr:hover td { background: #f9fbfd; }
+  td.precio { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; font-weight: 600; }
+  td.sinprecio { color: var(--rojo); font-style: italic; font-weight: normal; }
+  .badge { display: inline-block; background: #eef1f5; border-radius: 20px; padding: 2px 10px; font-size: 12px; color: #555; }
+  .acciones button { padding: 4px 9px; font-size: 13px; margin-right: 4px; }
+  .editar { color: var(--azul); } .borrar { color: var(--rojo); }
+  .vacio { text-align: center; padding: 40px; color: #888; }
+
+  /* modal */
+  .modal-fondo { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 100; align-items: center; justify-content: center; }
+  .modal-fondo.activo { display: flex; }
+  .modal { background: #fff; border-radius: 12px; padding: 22px; width: 420px; max-width: 92vw; }
+  .modal h2 { margin: 0 0 14px; color: var(--azul); }
+  .campo { margin-bottom: 12px; }
+  .campo label { display: block; font-size: 13px; color: #555; margin-bottom: 4px; }
+  .campo input, .campo select { width: 100%; padding: 9px; border: 1px solid var(--borde); border-radius: 8px; font-size: 15px; }
+  .modal-botones { display: flex; justify-content: flex-end; gap: 8px; margin-top: 18px; }
+  footer { text-align: center; font-size: 12px; color: #999; padding: 14px; }
+
+  /* ===== ZONAS / CROQUIS ===== */
+  .zonas-layout { display: flex; gap: 14px; align-items: flex-start; }
+  .panel-prod { width: 280px; flex-shrink: 0; background: #fff; border: 1px solid var(--borde); border-radius: 10px; padding: 10px; max-height: 620px; display: flex; flex-direction: column; }
+  .panel-prod h3 { margin: 4px 0 8px; font-size: 15px; color: var(--azul); }
+  .panel-prod input { width: 100%; padding: 8px; border: 1px solid var(--borde); border-radius: 8px; margin-bottom: 8px; }
+  .lista-arrastrable { overflow-y: auto; flex: 1; }
+  .prod-item { padding: 7px 9px; border: 1px solid var(--borde); border-radius: 7px; margin-bottom: 5px; cursor: grab; background: #fff; font-size: 13px; display: flex; justify-content: space-between; gap: 6px; }
+  .prod-item:hover { background: #f0f6ff; border-color: var(--azul-claro); }
+  .prod-item.asignado { border-left: 4px solid var(--verde); }
+  .prod-item small { color: #888; }
+  .prod-item.arrastrando { opacity: .4; }
+
+  .croquis-wrap { flex: 1; min-width: 0; }
+  .croquis-toolbar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
+  .croquis-toolbar .ayuda { font-size: 12px; color: #777; }
+  #lienzo {
+    position: relative; width: 100%; height: 560px; background: #fff;
+    border: 2px dashed var(--borde); border-radius: 10px; overflow: hidden;
+    background-image: linear-gradient(#eef1f5 1px, transparent 1px), linear-gradient(90deg, #eef1f5 1px, transparent 1px);
+    background-size: 25px 25px;
+  }
+  .zona {
+    position: absolute; border: 2px solid; border-radius: 8px;
+    display: flex; flex-direction: column; overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,.08); user-select: none;
+  }
+  .zona .zona-titulo { font-size: 13px; font-weight: 600; padding: 4px 8px; cursor: inherit; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .zona .zona-conteo { font-size: 12px; padding: 0 8px 4px; opacity: .85; }
+  .zona.editable { cursor: move; }
+  .zona.resaltada { outline: 3px solid var(--verde); outline-offset: 2px; }
+  .zona .borrar-zona { position: absolute; top: 2px; right: 4px; background: rgba(255,255,255,.8); border: none; border-radius: 50%; width: 20px; height: 20px; line-height: 18px; cursor: pointer; color: var(--rojo); font-weight: bold; padding: 0; display: none; }
+  .zona.editable .borrar-zona { display: block; }
+  .zona .manija { position: absolute; bottom: 0; right: 0; width: 16px; height: 16px; background: var(--azul); cursor: nwse-resize; border-radius: 8px 0 6px 0; display: none; }
+  .zona.editable .manija { display: block; }
+
+  /* panel detalle de zona */
+  .detalle-zona { margin-top: 14px; background: #fff; border: 1px solid var(--borde); border-radius: 10px; padding: 14px; }
+  .detalle-zona h3 { margin: 0 0 10px; color: var(--azul); }
+  .detalle-zona .chip { display: inline-flex; align-items: center; gap: 6px; background: #eef1f5; border-radius: 20px; padding: 4px 10px; margin: 0 6px 6px 0; font-size: 13px; }
+  .detalle-zona .chip button { border: none; background: none; color: var(--rojo); cursor: pointer; font-weight: bold; padding: 0; }
+
+  @media (max-width: 760px) {
+    .zonas-layout { flex-direction: column; }
+    .panel-prod { width: 100%; max-height: 240px; }
+    th:nth-child(3), td:nth-child(3) { display: none; }
+  }
+  td.sinprecio { color: inherit !important; font-style: normal !important; }
+  .demo-aviso { background:#fff8e1; border-bottom:1px solid #e0c97a; padding:.6rem 1rem; font:14px system-ui,sans-serif; text-align:center; }
+</style>
+</head>
+<body>
+<div class="demo-aviso">Demo pública del catálogo de LibreMax hecho por Santiago Cuenca Cabrera. Los precios están ocultos. <a href="../">Volver al portafolio</a></div>
+<header>
+  <h1>📚 LibreMax</h1>
+  <span class="stats" id="stats"></span>
+</header>
+
+<div class="tabs">
+  <button class="tab activa" data-vista="catalogo">Catálogo</button>
+  <button class="tab" data-vista="zonas">Zonas (croquis)</button>
+</div>
+
+<!-- ===================== VISTA CATALOGO ===================== -->
+<div class="vista activa" id="vista-catalogo">
+  <div class="barra">
+    <input type="text" id="buscar" placeholder="Buscar producto, marca... (escribi para filtrar)" autofocus>
+    <select id="filtroCat"><option value="">Todas las categorias</option></select>
+    <button class="primario" id="btnNuevo">+ Agregar producto</button>
+    <button id="btnExportar" title="Descargar respaldo para pasar al otro equipo">⬇ Exportar</button>
+    <button id="btnImportar" title="Cargar un respaldo desde archivo">⬆ Importar</button>
+    <input type="file" id="archivoImport" accept=".json" style="display:none">
+  </div>
+  <div class="contenido">
+    <table>
+      <thead>
+        <tr>
+          <th data-col="nombre">Producto ▲▼</th>
+          <th data-col="marca">Marca ▲▼</th>
+          <th data-col="categoria">Categoria ▲▼</th>
+          <th data-col="zona">Zona ▲▼</th>
+          <th data-col="precio" style="text-align:right">Precio ▲▼</th>
+          <th style="width:120px">Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="tabla"></tbody>
+    </table>
+    <div class="vacio" id="vacio" style="display:none">No se encontraron productos.</div>
+  </div>
+</div>
+
+<!-- ===================== VISTA ZONAS ===================== -->
+<div class="vista" id="vista-zonas">
+  <div class="contenido">
+    <div class="zonas-layout">
+      <div class="panel-prod">
+        <h3>Productos</h3>
+        <input type="text" id="buscarZona" placeholder="Buscar para arrastrar...">
+        <div class="lista-arrastrable" id="listaArrastrable"></div>
+      </div>
+      <div class="croquis-wrap">
+        <div class="croquis-toolbar">
+          <button id="btnModoEditar" class="primario">✏ Editar plano</button>
+          <button id="btnNuevaZona">+ Nueva zona</button>
+          <span class="ayuda" id="ayudaCroquis">Arrastrá un producto desde la izquierda y soltalo en una zona. Clic en una zona para ver qué contiene.</span>
+        </div>
+        <div id="lienzo"></div>
+        <div class="detalle-zona" id="detalleZona" style="display:none"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>LibreMax — Los cambios se guardan en este equipo. Usa Exportar/Importar para pasarlos a otro dispositivo.</footer>
+
+<!-- Modal alta/edicion -->
+<div class="modal-fondo" id="modal">
+  <div class="modal">
+    <h2 id="modalTitulo">Agregar producto</h2>
+    <input type="hidden" id="fId">
+    <div class="campo"><label>Nombre *</label><input type="text" id="fNombre"></div>
+    <div class="campo"><label>Marca</label><input type="text" id="fMarca" list="listaMarcas"><datalist id="listaMarcas"></datalist></div>
+    <div class="campo"><label>Categoria</label><input type="text" id="fCategoria" list="listaCat"><datalist id="listaCat"></datalist></div>
+    <div class="campo"><label>Zona / ubicacion en el local</label><input type="text" id="fZona" list="listaZonas"><datalist id="listaZonas"></datalist></div>
+    <div class="campo"><label>Precio ($)</label><input type="number" id="fPrecio" min="0" step="1"></div>
+    <div class="modal-botones">
+      <button id="btnCancelar">Cancelar</button>
+      <button class="primario" id="btnGuardar">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const SEMILLA = [{"id": 1, "nombre": "Sello Pizzini 60x40", "precio": null, "marca": "Pizzini", "categoria": "Sellos", "zona": ""}, {"id": 2, "nombre": "Sello Pizzini 30x12", "precio": null, "marca": "Pizzini", "categoria": "Sellos", "zona": ""}, {"id": 3, "nombre": "Rodillo p/ Etiquetadora", "precio": null, "marca": "", "categoria": "Otros", "zona": ""}, {"id": 4, "nombre": "Cera Dactilar", "precio": null, "marca": "", "categoria": "Sellos", "zona": ""}, {"id": 5, "nombre": "Rollo Fluor x10", "precio": null, "marca": "", "categoria": "Sellos", "zona": ""}, {"id": 6, "nombre": "Rollo Fluor x1", "precio": null, "marca": "", "categoria": "Sellos", "zona": ""}, {"id": 7, "nombre": "Mosadero con Dispenser", "precio": null, "marca": "", "categoria": "Otros", "zona": ""}, {"id": 8, "nombre": "Mosadero Grande", "precio": null, "marca": "", "categoria": "Otros", "zona": ""}, {"id": 9, "nombre": "Mosadero Chico", "precio": null, "marca": "", "categoria": "Otros", "zona": ""}, {"id": 10, "nombre": "Cinta p/ Reg.", "precio": null, "marca": "", "categoria": "Otros", "zona": ""}, {"id": 11, "nombre": "Rollo p/ Sello Eureka", "precio": null, "marca": "", "categoria": "Sellos", "zona": ""}, {"id": 12, "nombre": "Tinta p/ Sello 500cc", "precio": null, "marca": "", "categoria": "Sellos", "zona": ""}, {"id": 13, "nombre": "Tinta p/ Sello 250cc", "precio": null, "marca": "", "categoria": "Sellos", "zona": ""}, {"id": 14, "nombre": "Tinta p/ Sello Pagoda", "precio": null, "marca": "", "categoria": "Sellos", "zona": ""}, {"id": 15, "nombre": "Broches 23/20", "precio": null, "marca": "", "categoria": "Broches", "zona": ""}, {"id": 16, "nombre": "Broches 23/23", "precio": null, "marca": "", "categoria": "Broches", "zona": ""}, {"id": 17, "nombre": "Broches 21/6 x 5000", "precio": null, "marca": "", "categoria": "Broches", "zona": ""}, {"id": 18, "nombre": "Broche 23/8", "precio": null, "marca": "", "categoria": "Broches", "zona": ""}, {"id": 19, "nombre": "Broche 23/10", "precio": null, "marca": "", "categoria": "Broches", "zona": ""}, {"id": 20, "nombre": "Arandelas de Cartón", "precio": null, "marca": "", "categoria": "Otros", "zona": ""}, {"id": 21, "nombre": "Chinches Color 50u.", "precio": null, "marca": "", "categoria": "Broches", "zona": ""}, {"id": 22, "nombre": "Chinches Galera 50u.", "precio": null, "marca": "", "categoria": "Broches", "zona": ""}, {"id": 23, "nombre": "Chinches Doradas 100u.", "precio": null, "marca": "", "categoria": "Broches", "zona": ""}, {"id": 24, "nombre": "Chinches Plata 100u.", "precio": null, "marca": "", "categoria": "Broches", "zona": ""}, {"id": 25, "nombre": "Chinches 25u.", "precio": null, "marca": "", "categoria": "Broches", "zona": ""}, {"id": 26, "nombre": "Portaclips con Imán", "precio": null, "marca": "", "categoria": "Clips", "zona": ""}, {"id": 27, "nombre": "Portaclips Kores", "precio": null, "marca": "Kores", "categoria": "Clips", "zona": ""}, {"id": 28, "nombre": "Binder (643", "precio": null, "marca": "", "categoria": "Otros", "zona": ""}, {"id": 29, "nombre": "Binder (642", "precio": null, "marca": "", "categoria": "Otros", "zona": ""}, {"id": 30, "nombre": "Regla 25cm Fantasía", "precio": null, "marca": "", "categoria": "Geometria", "zona": ""}, {"id": 31, "nombre": "Regla 30cm Acrílico Común", "precio": null, "marca": "", "categoria": "Geometria", "zona": ""}, {"id": 32, "nombre": "Regla 30cm Acrílico Fantasía", "precio": null, "marca": "", "categoria": "Geometria", "zona": ""}, {"id": 33, "nombre": "Regla 30cm Acrílico Mapeo/Glue", "precio": null, "marca": "Mapeo", "categoria": "Geometria", "zona": ""}, {"id": 34, "nombre": "Regla Común 15cm", "precio": null, "marca": "", "categoria": "Geometria", "zona": ""}, {"id": 35, "nombre": "Regla Fantasía 15cm", "precio": null, "marca": "", "categoria": "Geometria", "zona": ""}, {"id": 36, "nombre": "Regla Fantasía 30cm", "precio": null, "marca": "", "categoria": "Geometria", "zona": ""}, {"id": 37, "nombre": "Regla Flexible 15cm", "precio": null, "marca": "", "categoria": "Geometria", "zona": ""}, {"id": 38, "nombre": "Regla Acrílico 20cm Mapeo Común", "precio": null, "marca": "Mapeo", "categoria": "Geometria", "zona": ""}, {"id": 39, "nombre": "Regla Acrílico 20cm Mapeo Grip", "precio": null, "marca": "Mapeo", "categoria": "Geometria", "zona": ""}, {"id": 40, "nombre": "Regla Aluminio 20cm", "precio": null, "marca": "", "categoria": "Geometria", "zona": ""}, {"id": 41, "nombre": "Regla Aluminio 30cm", "precio": null, "marca": "", "categoria": "Geometria", "zona": ""}, {"id": 42, "nombre": "Regla Pizzini 15cm", "precio": null, "marca": "Pizzini", "categoria": "Geometria", "zona": ""}, {"id": 43, "nombre": "Regla Pizzini 20cm", "precio": null, "marca": "Pizzini", "categoria": "Geometria", "zona": ""}, {"id": 44, "nombre": "Regla Pizzini 30cm", "precio": null, "marca": "Pizzini", "categoria": "Geometria", "zona": ""}, {"id": 45, "nombre": "Línea Ergonómica Regla", "precio": null, "marca": "", "categoria": "Geometria", "zona": ""}, {"id": 46, "nombre": "Línea Ergonómica Escuadra", "precio": null, "marca": "", "categoria": "Geometria", "zona": ""}, {"id": 47, "nombre": "Línea Ergonómica Transportador", "precio": null, "marca": "", "categoria": "Geometria", "zona": ""}, {"id": 48, "nombre": "Set de Geo Pizzini 20cm", "precio": null, "marca": "Pizzini", "categoria": "Geometria", "zona": ""}, {"id": 49, "nombre": "Set de Geo Pizzini 30cm", "precio": null, "marca": "Pizzini", "categoria": "Geometria", "zona": ""}, {"id": 50, "nombre": "Set Geometría 20cm Flexibles", "precio": null, "marca": "", "categoria": "Otros", "zona": ""}, {"id": 51, "nombre": "Set Geometría 20cm Acri. Fantasía", "precio": null, "marca": "", "categoria": "Otros", "zona": ""}, {"id": 52, "nombre": "Set Geometría 20cm (variante)", "precio": null, "marca": "", "categoria": "Otros", "zona": ""}, {"id": 53, "nombre": "Set Geometría 15cm Acrílico 4 Piezas", "precio": null, "marca": "", "categoria": "Otros", "zona": ""}, {"id": 54, "nombre": "Escuadras Pizzini 25cm x 45°", "precio": null, "marca": "Pizzini", "categoria": "Geometria", "zona": ""}, {"id": 55, "nombre": "Escuadras Pizzini 25cm x 60°", "precio": null, "marca": "Pizzini", "categoria": "Geometria", "zona": ""}, {"id": 56, "nombre": "Escuadra Pizzini 30x60", "precio": null, "marca": "Pizzini", "categoria": "Geometria", "zona": ""}, {"id": 57, "nombre": "Escuadra 15cm Flexible", "precio": null, "marca": "", "categoria": "Geometria", "zona": ""}, {"id": 58, "nombre": "Escuadra Simple", "precio": null, "marca": "", "categoria": "Geometria", "zona": ""}, {"id": 59, "nombre": "Escuadra con Transportador", "precio": null, "marca": "", "categoria": "Geometria", "zona": ""}, {"id": 60, "nombre": "Semicírculo Flexible", "precio": null, "marca": "", "categoria": "Otros", "zona": ""}, {"id": 61, "nombre": "Triple Decímetro Mapeo", "precio": null, "marca": "Mapeo", "categoria": "Otros", "zona": ""}, {"id": 62, "nombre": "Triple Decímetro Pizzini", "precio": null, "marca": "Pizzini", "categoria": "Otros", "zona": ""}, {"id": 63, "nombre": "Triple Decímetro Keyroad", "precio": null, "marca": "Keyroad", "categoria": "Otros", "zona": ""}, {"id": 64, "nombre": "Transportador Pizzini 360° x 10cm", "precio": null, "marca": "Pizzini", "categoria": "Geometria", "zona": ""}, {"id": 65, "nombre": "Transportador Pizzini 360° x 8cm", "precio": null, "marca": "Pizzini", "categoria": "Geometria", "zona": ""}, {"id": 66, "nombre": "Transportador Pizzini 180° P.", "precio": null, "marca": "Pizzini", "categoria": "Geometria", "zona": ""}, {"id": 67, "nombre": "Transportador Pizzini 180° Pro A.", "precio": null, "marca": "Pizzini", "categoria": "Geometria", "zona": ""}, {"id": 68, "nombre": "Cera Dactil", "precio": null, "marca": "", "categoria": "Sellos", "zona": ""}, {"id": 69, "nombre": "Abrochadora Eagle (3025)", "precio": null, "marca": "Eagle", "categoria": "Abrochadoras", "zona": ""}, {"id": 70, "nombre": "Abrochadora Eagle (5073)", "precio": null, "marca": "Eagle", "categoria": "Abrochadoras", "zona": ""}, {"id": 71, "nombre": "Abrochadora Eagle (B28)", "precio": null, "marca": "Eagle", "categoria": "Abrochadoras", "zona": ""}, {"id": 72, "nombre": "Abrochadora Eagle (B29)", "precio": null, "marca": "Eagle", "categoria": "Abrochadoras", "zona": ""}, {"id": 73, "nombre": "Abrochadora Olami (103)", "precio": null, "marca": "Olami", "categoria": "Abrochadoras", "zona": ""}, {"id": 74, "nombre": "Abrochadora Olami (101)", "precio": null, "marca": "Olami", "categoria": "Abrochadoras", "zona": ""}, {"id": 75, "nombre": "Abrochadora Olami (203)", "precio": null, "marca": "Olami", "categoria": "Abrochadoras", "zona": ""}, {"id": 76, "nombre": "Abrochadora Olami (202)", "precio": null, "marca": "Olami", "categoria": "Abrochadoras", "zona": ""}, {"id": 77, "nombre": "Perforadora Olami 8 Anon", "precio": null, "marca": "Olami", "categoria": "Perforadoras", "zona": ""}, {"id": 78, "nombre": "Perforadora Olami 40H", "precio": null, "marca": "Olami", "categoria": "Perforadoras", "zona": ""}, {"id": 79, "nombre": "Perforadora Kanex 20pp", "precio": null, "marca": "Kanex", "categoria": "Perforadoras", "zona": ""}, {"id": 80, "nombre": "Perforadora Kanex 35pp", "precio": null, "marca": "Kanex", "categoria": "Perforadoras", "zona": ""}, {"id": 81, "nombre": "Perforadora Kanex 40pp", "precio": null, "marca": "Kanex", "categoria": "Perforadoras", "zona": ""}, {"id": 82, "nombre": "Perforadora Wengfeng Punch", "precio": null, "marca": "Wengfeng", "categoria": "Perforadoras", "zona": ""}, {"id": 83, "nombre": "Sacabroche Pinza Techn", "precio": null, "marca": "Techn", "categoria": "Broches", "zona": ""}, {"id": 84, "nombre": "Sacabroche Pinza Eagle", "precio": null, "marca": "Eagle", "categoria": "Broches", "zona": ""}, {"id": 85, "nombre": "Cartón Gris 3mm 8N° 70x100", "precio": null, "marca": "", "categoria": "Otros", "zona": ""}, {"id": 86, "nombre": "Cartón Gris 2,5mm 10N° 70x100", "precio": null, "marca": "", "categoria": "Otros", "zona": ""}, {"id": 87, "nombre": "Cartón Gris 2mm 12N° 70x100", "precio": null, "marca": "", "categoria": "Otros", "zona": ""}, {"id": 88, "nombre": "Cartón Gris 1,5mm 16N° 70x100", "precio": null, "marca": "", "categoria": "Otros", "zona": ""}, {"id": 89, "nombre": "Broche TIT N°64", "precio": null, "marca": "TIT", "categoria": "Broches", "zona": ""}, {"id": 90, "nombre": "Broche TIT N°65", "precio": null, "marca": "TIT", "categoria": "Broches", "zona": ""}, {"id": 91, "nombre": "Broche TIT N°10", "precio": null, "marca": "TIT", "categoria": "Broches", "zona": ""}, {"id": 92, "nombre": "Broche TIT N°50", "precio": null, "marca": "TIT", "categoria": "Broches", "zona": ""}, {"id": 93, "nombre": "Broche TIT 21/6", "precio": null, "marca": "TIT", "categoria": "Broches", "zona": ""}, {"id": 94, "nombre": "Broche TIT 24/6", "precio": null, "marca": "TIT", "categoria": "Broches", "zona": ""}, {"id": 95, "nombre": "Broche GRAP N°64", "precio": null, "marca": "GRAP", "categoria": "Broches", "zona": ""}, {"id": 96, "nombre": "Broche GRAP N°65", "precio": null, "marca": "GRAP", "categoria": "Broches", "zona": ""}, {"id": 97, "nombre": "Broche GRAP N°10", "precio": null, "marca": "GRAP", "categoria": "Broches", "zona": ""}, {"id": 98, "nombre": "Broche GRAP N°50", "precio": null, "marca": "GRAP", "categoria": "Broches", "zona": ""}, {"id": 99, "nombre": "Broche GRAP 21/6", "precio": null, "marca": "GRAP", "categoria": "Broches", "zona": ""}, {"id": 100, "nombre": "Broche GRAP 24/6", "precio": null, "marca": "GRAP", "categoria": "Broches", "zona": ""}, {"id": 101, "nombre": "Broche DINAMIT N°65", "precio": null, "marca": "DINAMIT", "categoria": "Broches", "zona": ""}, {"id": 102, "nombre": "Broche DINAMIT N°10", "precio": null, "marca": "DINAMIT", "categoria": "Broches", "zona": ""}, {"id": 103, "nombre": "Broche DINAMIT N°50", "precio": null, "marca": "DINAMIT", "categoria": "Broches", "zona": ""}, {"id": 104, "nombre": "Broche DINAMIT 21/6", "precio": null, "marca": "DINAMIT", "categoria": "Broches", "zona": ""}, {"id": 105, "nombre": "Broche DINAMIT 24/6", "precio": null, "marca": "DINAMIT", "categoria": "Broches", "zona": ""}, {"id": 106, "nombre": "Broche Olami/Eico N°10", "precio": null, "marca": "Olami/Eico", "categoria": "Broches", "zona": ""}, {"id": 107, "nombre": "Broche Olami/Eico 10/50", "precio": null, "marca": "Olami/Eico", "categoria": "Broches", "zona": ""}, {"id": 108, "nombre": "Broche Olami/Eico 24/6", "precio": null, "marca": "Olami/Eico", "categoria": "Broches", "zona": ""}, {"id": 109, "nombre": "Broche Olami/Eico 26/6", "precio": null, "marca": "Olami/Eico", "categoria": "Broches", "zona": ""}, {"id": 110, "nombre": "Broche Olami/Eico 23/6", "precio": null, "marca": "Olami/Eico", "categoria": "Broches", "zona": ""}, {"id": 111, "nombre": "Broche Olami/Eico 23/8", "precio": null, "marca": "Olami/Eico", "categoria": "Broches", "zona": ""}, {"id": 112, "nombre": "Broche Olami/Eico 24/8", "precio": null, "marca": "Olami/Eico", "categoria": "Broches", "zona": ""}, {"id": 113, "nombre": "Broche Olami/Eico 23/10", "precio": null, "marca": "Olami/Eico", "categoria": "Broches", "zona": ""}, {"id": 114, "nombre": "Broche Olami/Eico 23/13", "precio": null, "marca": "Olami/Eico", "categoria": "Broches", "zona": ""}, {"id": 115, "nombre": "Broche Olami/Eico 23/20", "precio": null, "marca": "Olami/Eico", "categoria": "Broches", "zona": ""}, {"id": 116, "nombre": "Broche Olami/Eico 23/24", "precio": null, "marca": "Olami/Eico", "categoria": "Broches", "zona": ""}, {"id": 117, "nombre": "Broche Viking N°64", "precio": null, "marca": "Viking", "categoria": "Broches", "zona": ""}, {"id": 118, "nombre": "Broche Viking N°65", "precio": null, "marca": "Viking", "categoria": "Broches", "zona": ""}, {"id": 119, "nombre": "Broche Viking N°10", "precio": null, "marca": "Viking", "categoria": "Broches", "zona": ""}, {"id": 120, "nombre": "Broche Viking N°50", "precio": null, "marca": "Viking", "categoria": "Broches", "zona": ""}, {"id": 121, "nombre": "Broche Viking 21/6", "precio": null, "marca": "Viking", "categoria": "Broches", "zona": ""}, {"id": 122, "nombre": "Broche Viking 24/6", "precio": null, "marca": "Viking", "categoria": "Broches", "zona": ""}, {"id": 123, "nombre": "Hojas Adhesivas", "precio": null, "marca": "", "categoria": "Blocks", "zona": ""}, {"id": 124, "nombre": "Recibo Chico", "precio": null, "marca": "", "categoria": "Formularios", "zona": ""}, {"id": 125, "nombre": "Recibo Mediano", "precio": null, "marca": "", "categoria": "Formularios", "zona": ""}, {"id": 126, "nombre": "Recibo Mediano Duplicado", "precio": null, "marca": "", "categoria": "Formularios", "zona": ""}, {"id": 127, "nombre": "Pagaré Mil2B", "precio": null, "marca": "Mil2B", "categoria": "Otros", "zona": ""}, {"id": 128, "nombre": "Pagaré Dolare", "precio": null, "marca": "", "categoria": "Otros", "zona": ""}, {"id": 129, "nombre": "Pagaré Taloffa", "precio": null, "marca": "", "categoria": "Otros", "zona": ""}, {"id": 130, "nombre": "Alquiler Mediano", "precio": null, "marca": "", "categoria": "Formularios", "zona": ""}, {"id": 131, "nombre": "Alquiler Grande", "precio": null, "marca": "", "categoria": "Formularios", "zona": ""}, {"id": 132, "nombre": "Vale", "precio": null, "marca": "", "categoria": "Formularios", "zona": ""}, {"id": 133, "nombre": "Ficha 1", "precio": null, "marca": "", "categoria": "Formularios", "zona": ""}, {"id": 134, "nombre": "Ficha 2", "precio": null, "marca": "", "categoria": "Formularios", "zona": ""}, {"id": 135, "nombre": "Ficha 3", "precio": null, "marca": "", "categoria": "Formularios", "zona": ""}, {"id": 136, "nombre": "C. Corr.", "precio": null, "marca": "", "categoria": "Otros", "zona": ""}, {"id": 137, "nombre": "Correspondencia Dup 2", "precio": null, "marca": "", "categoria": "Formularios", "zona": ""}, {"id": 138, "nombre": "Correspondencia Trip 2", "precio": null, "marca": "", "categoria": "Formularios", "zona": ""}, {"id": 139, "nombre": "Caligrafía Técnico", "precio": null, "marca": "", "categoria": "Otros", "zona": ""}, {"id": 140, "nombre": "Talonario Chico", "precio": null, "marca": "", "categoria": "Formularios", "zona": ""}, {"id": 141, "nombre": "Talonario Grande", "precio": null, "marca": "", "categoria": "Formularios", "zona": ""}, {"id": 142, "nombre": "Lomo p/ Bibliorato por 20", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 143, "nombre": "Lomo p/ Bibliorato por Unidad", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 144, "nombre": "Canson N°3 Bco", "precio": null, "marca": "Canson", "categoria": "Papeles", "zona": ""}, {"id": 145, "nombre": "Canson N°3 Negro", "precio": null, "marca": "Canson", "categoria": "Papeles", "zona": ""}, {"id": 146, "nombre": "Canson N°3 Color", "precio": null, "marca": "Canson", "categoria": "Papeles", "zona": ""}, {"id": 147, "nombre": "Canson N°5 Bco", "precio": null, "marca": "Canson", "categoria": "Papeles", "zona": ""}, {"id": 148, "nombre": "Canson N°5 Negro", "precio": null, "marca": "Canson", "categoria": "Papeles", "zona": ""}, {"id": 149, "nombre": "Canson N°5 Color", "precio": null, "marca": "Canson", "categoria": "Papeles", "zona": ""}, {"id": 150, "nombre": "Canson N°6 Bco", "precio": null, "marca": "Canson", "categoria": "Papeles", "zona": ""}, {"id": 151, "nombre": "Canson N°6 Negro", "precio": null, "marca": "Canson", "categoria": "Papeles", "zona": ""}, {"id": 152, "nombre": "Canson N°6 Color", "precio": null, "marca": "Canson", "categoria": "Papeles", "zona": ""}, {"id": 153, "nombre": "Calcar 1028 N°3", "precio": null, "marca": "Calcar", "categoria": "Papeles", "zona": ""}, {"id": 154, "nombre": "Calcar 1028 N°5", "precio": null, "marca": "Calcar", "categoria": "Papeles", "zona": ""}, {"id": 155, "nombre": "Papel Vegetal A4", "precio": null, "marca": "", "categoria": "Papeles", "zona": ""}, {"id": 156, "nombre": "Papel Vegetal OF", "precio": null, "marca": "", "categoria": "Papeles", "zona": ""}, {"id": 157, "nombre": "Papel Notarial", "precio": null, "marca": "", "categoria": "Papeles", "zona": ""}, {"id": 158, "nombre": "Repues. Miu. N°3", "precio": null, "marca": "", "categoria": "Blocks", "zona": ""}, {"id": 159, "nombre": "Repues. Miu. N°5", "precio": null, "marca": "", "categoria": "Blocks", "zona": ""}, {"id": 160, "nombre": "Block N°5 20H Fantasía", "precio": null, "marca": "", "categoria": "Blocks", "zona": ""}, {"id": 161, "nombre": "Block N°5 20H Maof.", "precio": null, "marca": "", "categoria": "Blocks", "zona": ""}, {"id": 162, "nombre": "Block N°5 20HS Color", "precio": null, "marca": "", "categoria": "Blocks", "zona": ""}, {"id": 163, "nombre": "Block N°5 20HS Negro", "precio": null, "marca": "", "categoria": "Blocks", "zona": ""}, {"id": 164, "nombre": "Block Alfa A6 80H (cuad/liso)", "precio": null, "marca": "Alfa", "categoria": "Blocks", "zona": ""}, {"id": 165, "nombre": "Block Alfa x80H (cuad OF)", "precio": null, "marca": "Alfa", "categoria": "Blocks", "zona": ""}, {"id": 166, "nombre": "Block Alfa A5 80H", "precio": null, "marca": "Alfa", "categoria": "Blocks", "zona": ""}, {"id": 167, "nombre": "Block Alfa OF 80H (cuad)", "precio": null, "marca": "Alfa", "categoria": "Blocks", "zona": ""}, {"id": 168, "nombre": "Block Alfa OF 80H (raya)", "precio": null, "marca": "Alfa", "categoria": "Blocks", "zona": ""}, {"id": 169, "nombre": "Block Alfa A4 80H (raya)", "precio": null, "marca": "Alfa", "categoria": "Blocks", "zona": ""}, {"id": 170, "nombre": "Block x40H (raya/cuad OF)", "precio": null, "marca": "", "categoria": "Blocks", "zona": ""}, {"id": 171, "nombre": "Block x80H rayado OF", "precio": null, "marca": "", "categoria": "Blocks", "zona": ""}, {"id": 172, "nombre": "Block Iglu x80H A4 (cuadri)", "precio": null, "marca": "Iglu", "categoria": "Blocks", "zona": ""}, {"id": 173, "nombre": "Block Rivadavia 48H A4 (cuadri)", "precio": null, "marca": "Rivadavia", "categoria": "Blocks", "zona": ""}, {"id": 174, "nombre": "Block \"El Nene\" 24H", "precio": null, "marca": "El Nene", "categoria": "Blocks", "zona": ""}, {"id": 175, "nombre": "Bibliorato Esquela STF", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 176, "nombre": "Bibliorato A4 STF", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 177, "nombre": "Bibliorato OF STF", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 178, "nombre": "Bibliorato OF Lomo Ancho/Bajo", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 179, "nombre": "Bibliorato A4 Lomo Ancho", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 180, "nombre": "Bibliorato Platil OF A4", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 181, "nombre": "Bibliorato x2 Vulcano c/Est.", "precio": null, "marca": "Vulcano", "categoria": "Carpetas", "zona": ""}, {"id": 182, "nombre": "Carpeta OF A4 (lomo A)", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 183, "nombre": "Carpeta OF A4 (lomo b)", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 184, "nombre": "Carpeta A4 Datazone", "precio": null, "marca": "Datazone", "categoria": "Carpetas", "zona": ""}, {"id": 185, "nombre": "Carpeta A4 Institución", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 186, "nombre": "Carpeta A4 Iglu Till", "precio": null, "marca": "Iglu", "categoria": "Carpetas", "zona": ""}, {"id": 187, "nombre": "Carpeta A4 Iglu Till Metálica", "precio": null, "marca": "Iglu", "categoria": "Carpetas", "zona": ""}, {"id": 188, "nombre": "Carpeta Iglu OF (no solapa)", "precio": null, "marca": "Iglu", "categoria": "Carpetas", "zona": ""}, {"id": 189, "nombre": "Carpeta Iglu OF con Cinta", "precio": null, "marca": "Iglu", "categoria": "Carpetas", "zona": ""}, {"id": 190, "nombre": "Carpeta Veloz (económica)", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 191, "nombre": "Carpeta Veloz 3 Solapa de Congreso", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 192, "nombre": "Carpeta Veloz Iglu FSS (2 solapas)", "precio": null, "marca": "Iglu", "categoria": "Carpetas", "zona": ""}, {"id": 193, "nombre": "Carpeta Veloz A4 Iglu Prisma", "precio": null, "marca": "Iglu", "categoria": "Carpetas", "zona": ""}, {"id": 194, "nombre": "Carpeta Veloz OF P. Madera (2 solapas)", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 195, "nombre": "Carpeta Veloz 2 solapas A4 (económica)", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 196, "nombre": "Carpeta Veloz Colgante Color", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 197, "nombre": "Carpeta Veloz Colgante Marrón", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 198, "nombre": "Carpeta Fibra Negra A4 (22ni)", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 199, "nombre": "Carpeta Fibra Negra OF (22ni)", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 200, "nombre": "Caja A4 Datazone", "precio": null, "marca": "Datazone", "categoria": "Cajas", "zona": ""}, {"id": 201, "nombre": "Cajas A4 BCN Color", "precio": null, "marca": "BCN", "categoria": "Cajas", "zona": ""}, {"id": 202, "nombre": "Cajas OF A4 Iglu", "precio": null, "marca": "Iglu", "categoria": "Cajas", "zona": ""}, {"id": 203, "nombre": "Clasificador c/ Manija", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 204, "nombre": "Manija OF Común", "precio": null, "marca": "", "categoria": "Formularios", "zona": ""}, {"id": 205, "nombre": "Manija OF Congreso", "precio": null, "marca": "", "categoria": "Formularios", "zona": ""}, {"id": 206, "nombre": "Manija A4 Congreso", "precio": null, "marca": "", "categoria": "Formularios", "zona": ""}, {"id": 207, "nombre": "Cuadernillo Notarial 5H", "precio": null, "marca": "", "categoria": "Blocks", "zona": ""}, {"id": 208, "nombre": "Repuesto Rivadavia N°5 (C.A.)", "precio": null, "marca": "Rivadavia", "categoria": "Blocks", "zona": ""}, {"id": 209, "nombre": "(1028) Diseño", "precio": null, "marca": "", "categoria": "Otros", "zona": ""}, {"id": 210, "nombre": "Nepaco Plast Caja", "precio": null, "marca": "Nepaco", "categoria": "Cajas", "zona": ""}, {"id": 211, "nombre": "Nepaco Plast Unidad", "precio": null, "marca": "Nepaco", "categoria": "Otros", "zona": ""}, {"id": 212, "nombre": "Escarapela Tela", "precio": null, "marca": "", "categoria": "Banderas", "zona": ""}, {"id": 213, "nombre": "Escarapela Pin", "precio": null, "marca": "", "categoria": "Banderas", "zona": ""}, {"id": 214, "nombre": "Espiral Plástico 7mm UP/25HS", "precio": null, "marca": "", "categoria": "Encuadernacion", "zona": ""}, {"id": 215, "nombre": "Espiral Plástico 9mm UP/75HS", "precio": null, "marca": "", "categoria": "Encuadernacion", "zona": ""}, {"id": 216, "nombre": "Espiral Plástico 12mm UP/90HS", "precio": null, "marca": "", "categoria": "Encuadernacion", "zona": ""}, {"id": 217, "nombre": "Espiral Plástico 14mm UP/125HS", "precio": null, "marca": "", "categoria": "Encuadernacion", "zona": ""}, {"id": 218, "nombre": "Espiral Plástico 17mm UP/160HS", "precio": null, "marca": "", "categoria": "Encuadernacion", "zona": ""}, {"id": 219, "nombre": "Espiral Plástico 20mm UP/175HS", "precio": null, "marca": "", "categoria": "Encuadernacion", "zona": ""}, {"id": 220, "nombre": "Espiral Plástico 23mm UP/190HS", "precio": null, "marca": "", "categoria": "Encuadernacion", "zona": ""}, {"id": 221, "nombre": "Espiral Plástico 25mm UP/220HS", "precio": null, "marca": "", "categoria": "Encuadernacion", "zona": ""}, {"id": 222, "nombre": "Espiral Plástico 29mm UP/270HS", "precio": null, "marca": "", "categoria": "Encuadernacion", "zona": ""}, {"id": 223, "nombre": "Espiral Plástico 33mm UP/300HS", "precio": null, "marca": "", "categoria": "Encuadernacion", "zona": ""}, {"id": 224, "nombre": "Espiral Plástico 40mm UP/360HS", "precio": null, "marca": "", "categoria": "Encuadernacion", "zona": ""}, {"id": 225, "nombre": "Espiral Plástico 45mm UP/430HS", "precio": null, "marca": "", "categoria": "Encuadernacion", "zona": ""}, {"id": 226, "nombre": "Tapa Encuad. x50 A4 Azul Ico", "precio": null, "marca": "Ico", "categoria": "Encuadernacion", "zona": ""}, {"id": 227, "nombre": "Tapa Encuad. x50 OF Amarillo", "precio": null, "marca": "", "categoria": "Encuadernacion", "zona": ""}, {"id": 228, "nombre": "Carpeta con Folios A4 10 folios", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 229, "nombre": "Carpeta con Folios A4 20 folios", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 230, "nombre": "Carpeta con Folios A4 40 folios", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 231, "nombre": "Carpeta con Folios A4 60 folios", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 232, "nombre": "Carpeta con Folios A4 80 folios (con estuche)", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 233, "nombre": "Carpeta con Folios A4 100 folios (con estuche)", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 234, "nombre": "Carpeta con Folios Oficio 20 folios", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 235, "nombre": "Carpeta con Folios Oficio 40 folios", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 236, "nombre": "Carpeta con Folios Oficio 60 folios", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 237, "nombre": "Carpeta con Folios Oficio 80 folios (con estuche)", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 238, "nombre": "Carpeta con Folios Oficio 100 folios (con estuche)", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 239, "nombre": "Carpeta con Folios Oficio 80 folios (sin estuche)", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 240, "nombre": "Carpeta con Folios Oficio 100 folios (sin estuche)", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 241, "nombre": "Bandera Argentina (c/sol) 30x40", "precio": null, "marca": "", "categoria": "Banderas", "zona": ""}, {"id": 242, "nombre": "Bandera Argentina (s/sol) 30x40", "precio": null, "marca": "", "categoria": "Banderas", "zona": ""}, {"id": 243, "nombre": "Bandera Argentina (c/sol) 40x70", "precio": null, "marca": "", "categoria": "Banderas", "zona": ""}, {"id": 244, "nombre": "Bandera Argentina (s/sol) 40x70", "precio": null, "marca": "", "categoria": "Banderas", "zona": ""}, {"id": 245, "nombre": "Bandera Argentina (c/sol) 50x100", "precio": null, "marca": "", "categoria": "Banderas", "zona": ""}, {"id": 246, "nombre": "Bandera Argentina (s/sol) 50x100", "precio": null, "marca": "", "categoria": "Banderas", "zona": ""}, {"id": 247, "nombre": "Bandera Argentina (c/sol) 60x90", "precio": null, "marca": "", "categoria": "Banderas", "zona": ""}, {"id": 248, "nombre": "Bandera Argentina (s/sol) 60x90", "precio": null, "marca": "", "categoria": "Banderas", "zona": ""}, {"id": 249, "nombre": "Bandera Argentina (c/sol) 60x130", "precio": null, "marca": "", "categoria": "Banderas", "zona": ""}, {"id": 250, "nombre": "Bandera Argentina (s/sol) 60x130", "precio": null, "marca": "", "categoria": "Banderas", "zona": ""}, {"id": 251, "nombre": "Bandera Argentina (c/sol) 90x150", "precio": null, "marca": "", "categoria": "Banderas", "zona": ""}, {"id": 252, "nombre": "Bandera Argentina (s/sol) 90x150", "precio": null, "marca": "", "categoria": "Banderas", "zona": ""}, {"id": 253, "nombre": "Bandera Argentina (c/sol) 90x200", "precio": null, "marca": "", "categoria": "Banderas", "zona": ""}, {"id": 254, "nombre": "Bandera Argentina (s/sol) 90x200", "precio": null, "marca": "", "categoria": "Banderas", "zona": ""}, {"id": 255, "nombre": "Bandera Argentina (c/sol) 130x250", "precio": null, "marca": "", "categoria": "Banderas", "zona": ""}, {"id": 256, "nombre": "Bandera Argentina (s/sol) 130x250", "precio": null, "marca": "", "categoria": "Banderas", "zona": ""}, {"id": 257, "nombre": "Bandera Argentina (c/sol) 130x300", "precio": null, "marca": "", "categoria": "Banderas", "zona": ""}, {"id": 258, "nombre": "Bandera Argentina (s/sol) 130x300", "precio": null, "marca": "", "categoria": "Banderas", "zona": ""}, {"id": 259, "nombre": "Bandera Argentina (c/sol) 180x400", "precio": null, "marca": "", "categoria": "Banderas", "zona": ""}, {"id": 260, "nombre": "Bandera Argentina (c/sol) 270x400", "precio": null, "marca": "", "categoria": "Banderas", "zona": ""}, {"id": 261, "nombre": "Bandera Argentina (s/sol) 270x400", "precio": null, "marca": "", "categoria": "Banderas", "zona": ""}, {"id": 262, "nombre": "Bandera Argentina (medida ilegible)", "precio": null, "marca": "", "categoria": "Banderas", "zona": ""}, {"id": 263, "nombre": "Bandera Argentina (c/sol) 270x500", "precio": null, "marca": "", "categoria": "Banderas", "zona": ""}, {"id": 264, "nombre": "Bandera Argentina (s/sol) 270x500", "precio": null, "marca": "", "categoria": "Banderas", "zona": ""}, {"id": 265, "nombre": "Bandera Argentina (c/sol) 270x600", "precio": null, "marca": "", "categoria": "Banderas", "zona": ""}, {"id": 266, "nombre": "Bandera Argentina (s/sol) 270x600", "precio": null, "marca": "", "categoria": "Banderas", "zona": ""}, {"id": 267, "nombre": "Sello Numerador N°406", "precio": null, "marca": "", "categoria": "Sellos", "zona": ""}, {"id": 268, "nombre": "Sello Numerador N°408", "precio": null, "marca": "", "categoria": "Sellos", "zona": ""}, {"id": 269, "nombre": "Sello Numerador N°506", "precio": null, "marca": "", "categoria": "Sellos", "zona": ""}, {"id": 270, "nombre": "Sello Numerador N°508", "precio": null, "marca": "", "categoria": "Sellos", "zona": ""}, {"id": 271, "nombre": "Sello Numerador N°706", "precio": null, "marca": "", "categoria": "Sellos", "zona": ""}, {"id": 272, "nombre": "Sello Numerador N°708", "precio": null, "marca": "", "categoria": "Sellos", "zona": ""}, {"id": 273, "nombre": "Sello Numerador N°906", "precio": null, "marca": "", "categoria": "Sellos", "zona": ""}, {"id": 274, "nombre": "Sello Numerador N°1204", "precio": null, "marca": "", "categoria": "Sellos", "zona": ""}, {"id": 275, "nombre": "Sello Numerador N°1206", "precio": null, "marca": "", "categoria": "Sellos", "zona": ""}, {"id": 276, "nombre": "Sello Fichador N°400", "precio": null, "marca": "", "categoria": "Sellos", "zona": ""}, {"id": 277, "nombre": "Sello Fichador N°500", "precio": null, "marca": "", "categoria": "Sellos", "zona": ""}, {"id": 278, "nombre": "Sello Fichador N°700", "precio": null, "marca": "", "categoria": "Sellos", "zona": ""}, {"id": 279, "nombre": "Sello Fichador N°800", "precio": null, "marca": "", "categoria": "Sellos", "zona": ""}, {"id": 280, "nombre": "Clip N°28mm", "precio": null, "marca": "", "categoria": "Clips", "zona": ""}, {"id": 281, "nombre": "Clip N°33mm", "precio": null, "marca": "", "categoria": "Clips", "zona": ""}, {"id": 282, "nombre": "Clip N°38mm", "precio": null, "marca": "", "categoria": "Clips", "zona": ""}, {"id": 283, "nombre": "Clip N°50mm", "precio": null, "marca": "", "categoria": "Clips", "zona": ""}, {"id": 284, "nombre": "Clip N°78mm", "precio": null, "marca": "", "categoria": "Clips", "zona": ""}, {"id": 285, "nombre": "Clip N°100mm", "precio": null, "marca": "", "categoria": "Clips", "zona": ""}, {"id": 286, "nombre": "Clip Forrado N°3 (28mm)", "precio": null, "marca": "", "categoria": "Clips", "zona": ""}, {"id": 287, "nombre": "Clip Forrado N°4 (33mm)", "precio": null, "marca": "", "categoria": "Clips", "zona": ""}, {"id": 288, "nombre": "Clip Forrado N°6 (50mm)", "precio": null, "marca": "", "categoria": "Clips", "zona": ""}, {"id": 289, "nombre": "Clip Forrado N°25", "precio": null, "marca": "", "categoria": "Clips", "zona": ""}, {"id": 290, "nombre": "Clip Forrado N°32", "precio": null, "marca": "", "categoria": "Clips", "zona": ""}, {"id": 291, "nombre": "Clip Forrado N°41", "precio": null, "marca": "", "categoria": "Clips", "zona": ""}, {"id": 292, "nombre": "Clip Forrado N°51", "precio": null, "marca": "", "categoria": "Clips", "zona": ""}, {"id": 293, "nombre": "Caja Plana 2,5cm", "precio": null, "marca": "", "categoria": "Cajas", "zona": ""}, {"id": 294, "nombre": "Caja Plana 5cm", "precio": null, "marca": "", "categoria": "Cajas", "zona": ""}, {"id": 295, "nombre": "Caja Plana 7cm", "precio": null, "marca": "", "categoria": "Cajas", "zona": ""}, {"id": 296, "nombre": "Caja Fibra Negra 2,5cm", "precio": null, "marca": "", "categoria": "Cajas", "zona": ""}, {"id": 297, "nombre": "Caja Fibra Negra 5cm", "precio": null, "marca": "", "categoria": "Cajas", "zona": ""}, {"id": 298, "nombre": "Caja Fibra Negra 7cm", "precio": null, "marca": "", "categoria": "Cajas", "zona": ""}, {"id": 299, "nombre": "Acetato 50x70", "precio": null, "marca": "", "categoria": "Papeles", "zona": ""}, {"id": 300, "nombre": "Papel Vegetal 50x70", "precio": null, "marca": "", "categoria": "Papeles", "zona": ""}, {"id": 301, "nombre": "Carbónico p/tela", "precio": null, "marca": "", "categoria": "Otros", "zona": ""}, {"id": 302, "nombre": "Cartón Corrugado Común", "precio": null, "marca": "", "categoria": "Otros", "zona": ""}, {"id": 303, "nombre": "Cartón Corrugado Fantasía", "precio": null, "marca": "", "categoria": "Otros", "zona": ""}, {"id": 304, "nombre": "Papel Felpina", "precio": null, "marca": "", "categoria": "Papeles", "zona": ""}, {"id": 305, "nombre": "Cartulina Metalizada", "precio": null, "marca": "", "categoria": "Papeles", "zona": ""}, {"id": 306, "nombre": "Cartulina Flúor", "precio": null, "marca": "", "categoria": "Papeles", "zona": ""}, {"id": 307, "nombre": "Cartulina Común", "precio": null, "marca": "", "categoria": "Papeles", "zona": ""}, {"id": 308, "nombre": "Moño Grande", "precio": null, "marca": "", "categoria": "Banderas", "zona": ""}, {"id": 309, "nombre": "Moño Metalizado Grande", "precio": null, "marca": "", "categoria": "Banderas", "zona": ""}, {"id": 310, "nombre": "Moño Chico", "precio": null, "marca": "", "categoria": "Banderas", "zona": ""}, {"id": 311, "nombre": "Moño Metalizado Chico", "precio": null, "marca": "", "categoria": "Banderas", "zona": ""}, {"id": 312, "nombre": "Plano Resistencia Chico", "precio": null, "marca": "", "categoria": "Papeles", "zona": ""}, {"id": 313, "nombre": "Plano Resistencia Grande", "precio": null, "marca": "", "categoria": "Papeles", "zona": ""}, {"id": 314, "nombre": "Plano Rutas del Mercosur", "precio": null, "marca": "", "categoria": "Papeles", "zona": ""}, {"id": 315, "nombre": "Afiche Fantasía", "precio": null, "marca": "", "categoria": "Papeles", "zona": ""}, {"id": 316, "nombre": "Plastificado Frío", "precio": null, "marca": "", "categoria": "Otros", "zona": ""}, {"id": 317, "nombre": "Rollo Dancer por 20 metros", "precio": null, "marca": "Dancer", "categoria": "Sellos", "zona": ""}, {"id": 318, "nombre": "Raso N°0 x50MT", "precio": null, "marca": "", "categoria": "Otros", "zona": ""}, {"id": 319, "nombre": "Raso N°1 x50MT", "precio": null, "marca": "", "categoria": "Otros", "zona": ""}, {"id": 320, "nombre": "Raso N°2 x10MT", "precio": null, "marca": "", "categoria": "Otros", "zona": ""}, {"id": 321, "nombre": "Raso N°5 x10MT", "precio": null, "marca": "", "categoria": "Otros", "zona": ""}, {"id": 322, "nombre": "Raso N°9 x10MT", "precio": null, "marca": "", "categoria": "Otros", "zona": ""}, {"id": 323, "nombre": "Caja Mega", "precio": null, "marca": "", "categoria": "Cajas", "zona": ""}, {"id": 324, "nombre": "Caja Mega Chica", "precio": null, "marca": "", "categoria": "Cajas", "zona": ""}, {"id": 325, "nombre": "Cajas Cartón", "precio": null, "marca": "", "categoria": "Cajas", "zona": ""}, {"id": 326, "nombre": "Cajas Archivo (9cm)", "precio": null, "marca": "", "categoria": "Cajas", "zona": ""}, {"id": 327, "nombre": "Cajas Archivo (12cm)", "precio": null, "marca": "", "categoria": "Cajas", "zona": ""}, {"id": 328, "nombre": "Caja Cartón (9cm OF)", "precio": null, "marca": "", "categoria": "Cajas", "zona": ""}, {"id": 329, "nombre": "Carpeta N°3 W Poo", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 330, "nombre": "Carpeta N°3 Barbie", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 331, "nombre": "Carpeta N°3 Hello Kitty", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 332, "nombre": "Carpeta N°3 (varios)", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 333, "nombre": "Carpeta N°3 Rexon", "precio": null, "marca": "Rexon", "categoria": "Carpetas", "zona": ""}, {"id": 334, "nombre": "Carpeta c/cierre", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 335, "nombre": "Carpeta c/correa", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 336, "nombre": "Carpeta c/kismet", "precio": null, "marca": "Kismet", "categoria": "Carpetas", "zona": ""}, {"id": 337, "nombre": "Carpeta c/80 folios", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 338, "nombre": "Carpeta c/folio 10 Fantasía", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 339, "nombre": "Carpeta c/vaina A4", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 340, "nombre": "Carpeta A4", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 341, "nombre": "Carpeta A4 sobre", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 342, "nombre": "Carpeta A4 sobre", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 343, "nombre": "Carpeta A4 3ra División", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 344, "nombre": "Carpeta A4 3 Solapa Árabe", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 345, "nombre": "Carpeta A4 c/Nepaco", "precio": null, "marca": "Nepaco", "categoria": "Carpetas", "zona": ""}, {"id": 346, "nombre": "Carpeta A4 Fantasía", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 347, "nombre": "Carpeta Oficio sobre", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 348, "nombre": "Carpeta Oficio", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 349, "nombre": "Carpeta Platil", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 350, "nombre": "Carpeta Fibra Negra", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 351, "nombre": "Carpeta Transparente 2 Bolsi", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 352, "nombre": "Carpeta Swing", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 353, "nombre": "Carpeta p/Formulario", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 354, "nombre": "Carpeta Carátula Oficio/A4", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 355, "nombre": "Carpeta \"L\" A4", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 356, "nombre": "Carpeta \"L\" Oficio", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 357, "nombre": "Carpeta Lama Opaca A4", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 358, "nombre": "Carpeta Lama Opaca Oficio", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 359, "nombre": "Carpeta Lama Brillosa A4", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 360, "nombre": "Carpeta Lama Brillosa Oficio", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 361, "nombre": "Velox c/broche Metal A4", "precio": null, "marca": "", "categoria": "Broches", "zona": ""}, {"id": 362, "nombre": "Velox c/broche Metal Oficio", "precio": null, "marca": "", "categoria": "Broches", "zona": ""}, {"id": 363, "nombre": "Porta Block Saboni A4", "precio": null, "marca": "Saboni", "categoria": "Blocks", "zona": ""}, {"id": 364, "nombre": "Porta Block Saboni Oficio", "precio": null, "marca": "Saboni", "categoria": "Blocks", "zona": ""}, {"id": 365, "nombre": "Porta Block Cristal A4", "precio": null, "marca": "", "categoria": "Blocks", "zona": ""}, {"id": 366, "nombre": "Porta Block Cristal Oficio", "precio": null, "marca": "", "categoria": "Blocks", "zona": ""}, {"id": 367, "nombre": "Porta Block Madera A4", "precio": null, "marca": "", "categoria": "Blocks", "zona": ""}, {"id": 368, "nombre": "Porta Block Madera Oficio", "precio": null, "marca": "", "categoria": "Blocks", "zona": ""}, {"id": 369, "nombre": "Porta Block sin Tapa", "precio": null, "marca": "", "categoria": "Blocks", "zona": ""}, {"id": 370, "nombre": "Porta Block con Tapa Oficio", "precio": null, "marca": "", "categoria": "Blocks", "zona": ""}, {"id": 371, "nombre": "Porta Block A5", "precio": null, "marca": "", "categoria": "Blocks", "zona": ""}, {"id": 372, "nombre": "Clasificador", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 373, "nombre": "Sobres Varios", "precio": null, "marca": "", "categoria": "Sobres", "zona": ""}, {"id": 374, "nombre": "Sobre A4 PVC con Abrojo", "precio": null, "marca": "", "categoria": "Sobres", "zona": ""}, {"id": 375, "nombre": "Sticker", "precio": null, "marca": "", "categoria": "Otros", "zona": ""}, {"id": 376, "nombre": "Hojas N°3 Cuadri Koby x48", "precio": null, "marca": "Koby", "categoria": "Blocks", "zona": ""}, {"id": 377, "nombre": "Repuesto N°3 Koby", "precio": null, "marca": "Koby", "categoria": "Blocks", "zona": ""}, {"id": 378, "nombre": "Repuesto N°3 Rivadavia", "precio": null, "marca": "Rivadavia", "categoria": "Blocks", "zona": ""}, {"id": 379, "nombre": "Block A5 Lisos", "precio": null, "marca": "", "categoria": "Blocks", "zona": ""}, {"id": 380, "nombre": "Folios Separados 9 Divisiones A4", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 381, "nombre": "Folios Separados 9 Divisiones Oficio", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 382, "nombre": "Separadores A4 Acetato x6", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 383, "nombre": "Separadores A4 Acetato x10", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 384, "nombre": "Separadores A4 Acetato Elfen 10 y 12 posición", "precio": null, "marca": "Elfen", "categoria": "Carpetas", "zona": ""}, {"id": 385, "nombre": "Separadores A4 Sakura 5 posición", "precio": null, "marca": "Sakura", "categoria": "Carpetas", "zona": ""}, {"id": 386, "nombre": "Separadores A4 12 posición", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 387, "nombre": "Separadores 5 posición Lama A4", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 388, "nombre": "Separadores 12 posición Lama OF/A4", "precio": null, "marca": "", "categoria": "Carpetas", "zona": ""}, {"id": 389, "nombre": "Separador Oficio Mil28", "precio": null, "marca": "Mil28", "categoria": "Carpetas", "zona": ""}, {"id": 390, "nombre": "Separador A4 Mil28", "precio": null, "marca": "Mil28", "categoria": "Carpetas", "zona": ""}, {"id": 391, "nombre": "Mini Afiche", "precio": null, "marca": "", "categoria": "Papeles", "zona": ""}];
+const CLAVE = 'libremax_productos_v1';
+const CLAVE_ZONAS = 'libremax_zonas_v1';
+const PALETA = ['#e3f2fd','#fff3e0','#e8f5e9','#fce4ec','#f3e5f5','#e0f7fa','#fff9c4','#efebe9'];
+const PALETA_BORDE = ['#1976d2','#f57c00','#388e3c','#c2185b','#7b1fa2','#0097a7','#fbc02d','#5d4037'];
+
+let productos = cargar(CLAVE, () => JSON.parse(JSON.stringify(SEMILLA)));
+let zonas = cargar(CLAVE_ZONAS, () => []);
+let orden = { col: 'nombre', asc: true };
+let modoEditarPlano = false;
+let zonaSeleccionada = null;
+
+function cargar(clave, porDefecto) {
+  try { const g = localStorage.getItem(clave); if (g) return JSON.parse(g); } catch (e) {}
+  return porDefecto();
+}
+function persistir() {
+  try { localStorage.setItem(CLAVE, JSON.stringify(productos)); }
+  catch (e) { alert('No se pudo guardar en este equipo: ' + e.message); }
+}
+function persistirZonas() {
+  try { localStorage.setItem(CLAVE_ZONAS, JSON.stringify(zonas)); } catch (e) {}
+}
+function nuevoId(arr) { return arr.reduce((m, p) => Math.max(m, p.id || 0), 0) + 1; }
+function fmt(precio) {
+  if (precio === null || precio === undefined || precio === '') return null;
+  return '$' + Number(precio).toLocaleString('es-AR');
+}
+function escapar(s) {
+  return (s || '').toString().replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+}
+function categorias() { return [...new Set(productos.map(p => p.categoria).filter(Boolean))].sort(); }
+function marcas() { return [...new Set(productos.map(p => p.marca).filter(Boolean))].sort(); }
+
+function poblarFiltros() {
+  const sel = document.getElementById('filtroCat');
+  const actual = sel.value;
+  sel.innerHTML = '<option value="">Todas las categorias</option>' +
+    categorias().map(c => `<option>${c}</option>`).join('');
+  sel.value = actual;
+  document.getElementById('listaCat').innerHTML = categorias().map(c => `<option value="${c}">`).join('');
+  document.getElementById('listaMarcas').innerHTML = marcas().map(m => `<option value="${m}">`).join('');
+  document.getElementById('listaZonas').innerHTML = zonas.map(z => `<option value="${z.nombre}">`).join('');
+}
+
+/* ===================== CATALOGO ===================== */
+function render() {
+  const q = document.getElementById('buscar').value.trim().toLowerCase();
+  const cat = document.getElementById('filtroCat').value;
+  let lista = productos.filter(p => {
+    const coincide = !q || (p.nombre + ' ' + (p.marca||'') + ' ' + (p.categoria||'')).toLowerCase().includes(q);
+    const enCat = !cat || p.categoria === cat;
+    return coincide && enCat;
+  });
+  lista.sort((a, b) => {
+    let va = a[orden.col], vb = b[orden.col];
+    if (orden.col === 'precio') { va = va ?? -1; vb = vb ?? -1; return orden.asc ? va - vb : vb - va; }
+    va = (va || '').toString().toLowerCase(); vb = (vb || '').toString().toLowerCase();
+    return orden.asc ? va.localeCompare(vb) : vb.localeCompare(va);
+  });
+  document.getElementById('tabla').innerHTML = lista.map(p => {
+    const precioTxt = fmt(p.precio);
+    const tdPrecio = precioTxt ? `<td class="precio">${precioTxt}</td>` : `<td class="precio sinprecio">—</td>`;
+    return `<tr>
+      <td>${escapar(p.nombre)}</td>
+      <td>${p.marca ? '<span class="badge">'+escapar(p.marca)+'</span>' : ''}</td>
+      <td>${escapar(p.categoria||'')}</td>
+      <td>${escapar(p.zona||'')}</td>
+      ${tdPrecio}
+      <td class="acciones">
+        <button class="editar" data-id="${p.id}">Editar</button>
+        <button class="borrar" data-id="${p.id}">Borrar</button>
+      </td>
+    </tr>`;
+  }).join('');
+  document.getElementById('vacio').style.display = lista.length ? 'none' : 'block';
+  const conPrecio = productos.filter(p => p.precio != null).length;
+  document.getElementById('stats').textContent =
+    `${productos.length} productos · ${productos.length - conPrecio} sin precio · mostrando ${lista.length}`;
+}
+
+/* ===================== MODAL ===================== */
+function abrirModal(p) {
+  document.getElementById('modalTitulo').textContent = p ? 'Editar producto' : 'Agregar producto';
+  document.getElementById('fId').value = p ? p.id : '';
+  document.getElementById('fNombre').value = p ? p.nombre : '';
+  document.getElementById('fMarca').value = p ? (p.marca||'') : '';
+  document.getElementById('fCategoria').value = p ? (p.categoria||'') : '';
+  document.getElementById('fZona').value = p ? (p.zona||'') : '';
+  document.getElementById('fPrecio').value = p && p.precio != null ? p.precio : '';
+  document.getElementById('modal').classList.add('activo');
+  document.getElementById('fNombre').focus();
+}
+function cerrarModal() { document.getElementById('modal').classList.remove('activo'); }
+function guardar() {
+  const nombre = document.getElementById('fNombre').value.trim();
+  if (!nombre) { alert('El nombre es obligatorio.'); return; }
+  const precioRaw = document.getElementById('fPrecio').value;
+  const datos = {
+    nombre,
+    marca: document.getElementById('fMarca').value.trim(),
+    categoria: document.getElementById('fCategoria').value.trim() || 'Otros',
+    zona: document.getElementById('fZona').value.trim(),
+    precio: precioRaw === '' ? null : Math.round(Number(precioRaw)),
+  };
+  const id = document.getElementById('fId').value;
+  if (id) { Object.assign(productos.find(x => x.id == id), datos); }
+  else { productos.push({ id: nuevoId(productos), ...datos }); }
+  persistir(); poblarFiltros(); render(); renderZonas(); cerrarModal();
+}
+function borrar(id) {
+  const p = productos.find(x => x.id == id);
+  if (!p) return;
+  if (confirm('¿Borrar "' + p.nombre + '"?')) {
+    productos = productos.filter(x => x.id != id);
+    persistir(); render(); renderZonas();
+  }
+}
+
+/* ===================== EXPORT / IMPORT ===================== */
+function exportar() {
+  const fecha = new Date().toISOString().slice(0, 10);
+  const paquete = { productos, zonas, exportado: fecha };
+  const blob = new Blob([JSON.stringify(paquete, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `libremax_respaldo_${fecha}.json`;
+  a.click(); URL.revokeObjectURL(a.href);
+}
+function importar(archivo) {
+  const lector = new FileReader();
+  lector.onload = e => {
+    try {
+      const datos = JSON.parse(e.target.result);
+      // admite formato nuevo {productos, zonas} o el viejo (array de productos)
+      const prods = Array.isArray(datos) ? datos : datos.productos;
+      const zns = Array.isArray(datos) ? null : datos.zonas;
+      if (!Array.isArray(prods)) throw new Error('Formato invalido');
+      if (!confirm('Esto reemplaza los datos actuales por los del archivo (' + prods.length + ' productos). ¿Continuar?')) return;
+      productos = prods;
+      if (Array.isArray(zns)) zonas = zns;
+      persistir(); persistirZonas(); poblarFiltros(); render(); renderZonas();
+      alert('Respaldo importado: ' + prods.length + ' productos.');
+    } catch (err) { alert('No se pudo leer el archivo: ' + err.message); }
+  };
+  lector.readAsText(archivo);
+}
+
+/* ===================== ZONAS / CROQUIS ===================== */
+function colorZona(i) { return { fondo: PALETA[i % PALETA.length], borde: PALETA_BORDE[i % PALETA_BORDE.length] }; }
+
+function contarEnZona(nombre) { return productos.filter(p => (p.zona||'') === nombre).length; }
+
+function renderListaArrastrable() {
+  const q = document.getElementById('buscarZona').value.trim().toLowerCase();
+  const lista = productos
+    .filter(p => !q || (p.nombre + ' ' + (p.marca||'')).toLowerCase().includes(q))
+    .sort((a,b) => a.nombre.localeCompare(b.nombre));
+  document.getElementById('listaArrastrable').innerHTML = lista.map(p => `
+    <div class="prod-item ${p.zona ? 'asignado' : ''}" draggable="true" data-id="${p.id}" title="${p.zona ? 'En: '+escapar(p.zona) : 'Sin zona'}">
+      <span>${escapar(p.nombre)}</span>
+      ${p.zona ? '<small>'+escapar(p.zona)+'</small>' : ''}
+    </div>`).join('') || '<div class="vacio">Sin resultados</div>';
+}
+
+function renderZonas() {
+  const lienzo = document.getElementById('lienzo');
+  lienzo.innerHTML = '';
+  zonas.forEach((z, i) => {
+    const c = colorZona(i);
+    const div = document.createElement('div');
+    div.className = 'zona' + (modoEditarPlano ? ' editable' : '') + (zonaSeleccionada === z.id ? ' resaltada' : '');
+    div.style.left = z.x + 'px'; div.style.top = z.y + 'px';
+    div.style.width = z.w + 'px'; div.style.height = z.h + 'px';
+    div.style.background = c.fondo; div.style.borderColor = c.borde;
+    div.dataset.id = z.id;
+    div.innerHTML = `
+      <div class="zona-titulo" style="color:${c.borde}">${escapar(z.nombre)}</div>
+      <div class="zona-conteo">${contarEnZona(z.nombre)} producto(s)</div>
+      <button class="borrar-zona" title="Borrar zona">×</button>
+      <div class="manija"></div>`;
+    lienzo.appendChild(div);
+  });
+  renderListaArrastrable();
+  poblarFiltros();
+  if (zonaSeleccionada) renderDetalleZona();
+}
+
+function crearZona() {
+  const nombre = prompt('Nombre de la zona (ej: Estantería 1, Mostrador, Vidriera):', 'Zona ' + (zonas.length + 1));
+  if (!nombre) return;
+  zonas.push({ id: nuevoId(zonas), nombre: nombre.trim(), x: 30, y: 30, w: 160, h: 110 });
+  persistirZonas();
+  if (!modoEditarPlano) toggleModoEditar(true);
+  renderZonas();
+}
+
+function renombrarZona(z) {
+  const nuevo = prompt('Nuevo nombre de la zona:', z.nombre);
+  if (!nuevo || nuevo.trim() === z.nombre) return;
+  const viejo = z.nombre; z.nombre = nuevo.trim();
+  // re-vincula los productos que apuntaban al nombre viejo
+  productos.forEach(p => { if ((p.zona||'') === viejo) p.zona = z.nombre; });
+  persistir(); persistirZonas(); render(); renderZonas();
+}
+
+function borrarZona(z) {
+  if (!confirm('¿Borrar la zona "' + z.nombre + '"? Los productos quedaran sin zona.')) return;
+  productos.forEach(p => { if ((p.zona||'') === z.nombre) p.zona = ''; });
+  zonas = zonas.filter(x => x.id !== z.id);
+  if (zonaSeleccionada === z.id) { zonaSeleccionada = null; document.getElementById('detalleZona').style.display = 'none'; }
+  persistir(); persistirZonas(); render(); renderZonas();
+}
+
+function toggleModoEditar(forzar) {
+  modoEditarPlano = (forzar !== undefined) ? forzar : !modoEditarPlano;
+  document.getElementById('btnModoEditar').classList.toggle('primario', modoEditarPlano);
+  document.getElementById('btnModoEditar').textContent = modoEditarPlano ? '✓ Listo' : '✏ Editar plano';
+  document.getElementById('ayudaCroquis').textContent = modoEditarPlano
+    ? 'Arrastrá las zonas para moverlas, usá la esquina azul para cambiar el tamaño, doble clic para renombrar, × para borrar.'
+    : 'Arrastrá un producto desde la izquierda y soltalo en una zona. Clic en una zona para ver qué contiene.';
+  renderZonas();
+}
+
+function seleccionarZona(z) {
+  zonaSeleccionada = z.id;
+  renderDetalleZona();
+  renderZonas();
+}
+function renderDetalleZona() {
+  const z = zonas.find(x => x.id === zonaSeleccionada);
+  const cont = document.getElementById('detalleZona');
+  if (!z) { cont.style.display = 'none'; return; }
+  const enZona = productos.filter(p => (p.zona||'') === z.nombre).sort((a,b)=>a.nombre.localeCompare(b.nombre));
+  cont.style.display = 'block';
+  cont.innerHTML = `<h3>${escapar(z.nombre)} — ${enZona.length} producto(s)</h3>` +
+    (enZona.length
+      ? enZona.map(p => `<span class="chip">${escapar(p.nombre)} <button data-quitar="${p.id}" title="Quitar de la zona">×</button></span>`).join('')
+      : '<p style="color:#888">Todavía no hay productos en esta zona. Arrastrá productos desde la izquierda.</p>');
+}
+
+/* ---- mover / redimensionar zonas (pointer events) ---- */
+let arrastreZona = null;
+document.getElementById('lienzo').addEventListener('pointerdown', e => {
+  if (!modoEditarPlano) return;
+  const divZona = e.target.closest('.zona');
+  if (!divZona) return;
+  if (e.target.classList.contains('borrar-zona')) return;
+  const z = zonas.find(x => x.id == divZona.dataset.id);
+  const esManija = e.target.classList.contains('manija');
+  arrastreZona = {
+    z, modo: esManija ? 'resize' : 'move',
+    inicioX: e.clientX, inicioY: e.clientY,
+    origX: z.x, origY: z.y, origW: z.w, origH: z.h,
+    rect: document.getElementById('lienzo').getBoundingClientRect(),
+  };
+  divZona.setPointerCapture(e.pointerId);
+});
+document.getElementById('lienzo').addEventListener('pointermove', e => {
+  if (!arrastreZona) return;
+  const a = arrastreZona;
+  const dx = e.clientX - a.inicioX, dy = e.clientY - a.inicioY;
+  if (a.modo === 'move') {
+    a.z.x = Math.max(0, Math.min(a.origX + dx, a.rect.width - a.z.w));
+    a.z.y = Math.max(0, Math.min(a.origY + dy, a.rect.height - a.z.h));
+  } else {
+    a.z.w = Math.max(70, Math.min(a.origW + dx, a.rect.width - a.z.x));
+    a.z.h = Math.max(50, Math.min(a.origH + dy, a.rect.height - a.z.y));
+  }
+  const div = document.querySelector('.zona[data-id="' + a.z.id + '"]');
+  if (div) { div.style.left = a.z.x+'px'; div.style.top = a.z.y+'px'; div.style.width = a.z.w+'px'; div.style.height = a.z.h+'px'; }
+});
+document.getElementById('lienzo').addEventListener('pointerup', () => {
+  if (arrastreZona) { persistirZonas(); arrastreZona = null; }
+});
+
+/* ---- clicks en zonas (borrar, renombrar, seleccionar) ---- */
+document.getElementById('lienzo').addEventListener('click', e => {
+  const divZona = e.target.closest('.zona');
+  if (!divZona) return;
+  const z = zonas.find(x => x.id == divZona.dataset.id);
+  if (e.target.classList.contains('borrar-zona')) { borrarZona(z); return; }
+  if (!modoEditarPlano) seleccionarZona(z);
+});
+document.getElementById('lienzo').addEventListener('dblclick', e => {
+  const divZona = e.target.closest('.zona');
+  if (divZona && modoEditarPlano) renombrarZona(zonas.find(x => x.id == divZona.dataset.id));
+});
+
+/* ---- drag & drop de productos sobre zonas ---- */
+let idArrastrado = null;
+document.getElementById('listaArrastrable').addEventListener('dragstart', e => {
+  const item = e.target.closest('.prod-item'); if (!item) return;
+  idArrastrado = item.dataset.id;
+  e.dataTransfer.setData('text/plain', idArrastrado);
+  e.dataTransfer.effectAllowed = 'move';
+  item.classList.add('arrastrando');
+});
+document.getElementById('listaArrastrable').addEventListener('dragend', e => {
+  const item = e.target.closest('.prod-item'); if (item) item.classList.remove('arrastrando');
+});
+document.getElementById('lienzo').addEventListener('dragover', e => {
+  const divZona = e.target.closest('.zona');
+  if (divZona) { e.preventDefault(); divZona.classList.add('resaltada'); }
+});
+document.getElementById('lienzo').addEventListener('dragleave', e => {
+  const divZona = e.target.closest('.zona');
+  if (divZona && divZona.dataset.id != zonaSeleccionada) divZona.classList.remove('resaltada');
+});
+document.getElementById('lienzo').addEventListener('drop', e => {
+  const divZona = e.target.closest('.zona'); if (!divZona) return;
+  e.preventDefault();
+  const id = e.dataTransfer.getData('text/plain') || idArrastrado;
+  const z = zonas.find(x => x.id == divZona.dataset.id);
+  const p = productos.find(x => x.id == id);
+  if (z && p) { p.zona = z.nombre; persistir(); render(); renderZonas(); }
+  idArrastrado = null;
+});
+
+/* quitar producto de zona desde el detalle */
+document.getElementById('detalleZona').addEventListener('click', e => {
+  const id = e.target.dataset.quitar; if (!id) return;
+  const p = productos.find(x => x.id == id);
+  if (p) { p.zona = ''; persistir(); render(); renderZonas(); }
+});
+
+/* ===================== PESTAÑAS ===================== */
+function cambiarVista(v) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('activa', t.dataset.vista === v));
+  document.getElementById('vista-catalogo').classList.toggle('activa', v === 'catalogo');
+  document.getElementById('vista-zonas').classList.toggle('activa', v === 'zonas');
+  if (v === 'zonas') renderZonas();
+}
+
+/* ===================== EVENTOS ===================== */
+document.getElementById('buscar').addEventListener('input', render);
+document.getElementById('filtroCat').addEventListener('change', render);
+document.getElementById('btnNuevo').addEventListener('click', () => abrirModal(null));
+document.getElementById('btnGuardar').addEventListener('click', guardar);
+document.getElementById('btnCancelar').addEventListener('click', cerrarModal);
+document.getElementById('btnExportar').addEventListener('click', exportar);
+document.getElementById('btnImportar').addEventListener('click', () => document.getElementById('archivoImport').click());
+document.getElementById('archivoImport').addEventListener('change', e => { if (e.target.files[0]) importar(e.target.files[0]); e.target.value = ''; });
+document.getElementById('modal').addEventListener('click', e => { if (e.target.id === 'modal') cerrarModal(); });
+document.getElementById('tabla').addEventListener('click', e => {
+  const id = e.target.dataset.id; if (!id) return;
+  if (e.target.classList.contains('editar')) abrirModal(productos.find(p => p.id == id));
+  if (e.target.classList.contains('borrar')) borrar(id);
+});
+document.querySelectorAll('th[data-col]').forEach(th => {
+  th.addEventListener('click', () => {
+    const col = th.dataset.col;
+    if (orden.col === col) orden.asc = !orden.asc; else { orden.col = col; orden.asc = true; }
+    render();
+  });
+});
+document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => cambiarVista(t.dataset.vista)));
+document.getElementById('btnModoEditar').addEventListener('click', () => toggleModoEditar());
+document.getElementById('btnNuevaZona').addEventListener('click', crearZona);
+document.getElementById('buscarZona').addEventListener('input', renderListaArrastrable);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrarModal(); });
+
+poblarFiltros();
+render();
+</script>
+</body>
+</html>

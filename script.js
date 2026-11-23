@@ -51,7 +51,7 @@ viewer.addEventListener("close", () => body.replaceChildren());
 // Aparición suave al hacer scroll (se desactiva con reduced motion)
 const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 if (!reduce && "IntersectionObserver" in window) {
-  const items = document.querySelectorAll(".desktop > .window:not(:first-child)");
+  const items = document.querySelectorAll(".section .section-head, .cert-grid, .project-grid, .about-grid, .contact-list");
   items.forEach((el) => el.classList.add("reveal"));
   const io = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
