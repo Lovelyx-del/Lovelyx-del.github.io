@@ -208,22 +208,45 @@ strong { font-weight: 600; }
 }
 
 /* ---------- Certificados ---------- */
-.group-title {
-  display: flex; flex-wrap: wrap; align-items: baseline; gap: .25rem .6rem;
-  font-size: 1rem; margin: 2.2rem 0 .9rem;
+/* Carrusel horizontal (scroll-snap nativo; flechas como alternativa al gesto) */
+.carousel-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  margin-bottom: .9rem;
 }
-.section-head + .group-title { margin-top: 0; }
-.group-title span { font-size: var(--text-small); font-weight: 400; color: var(--ink-2); }
+.carousel-hint { margin: 0; font-size: var(--text-small); color: var(--ink-2); }
+.carousel-controls { display: flex; gap: .5rem; }
+.carousel-btn {
+  display: grid; place-items: center; width: 44px; height: 44px;
+  border: 1px solid var(--line-strong); border-radius: var(--radius-md);
+  background: var(--paper); color: var(--ink); cursor: pointer;
+  touch-action: manipulation;
+  transition: background-color .15s, border-color .15s;
+}
+.carousel-btn:hover { background: var(--accent-tint); border-color: var(--accent); color: var(--accent); }
+.carousel-btn:disabled { opacity: .4; cursor: default; background: var(--paper); border-color: var(--line); color: var(--ink-2); }
 
-.cert-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: .9rem; }
+.carousel {
+  display: flex; gap: .9rem;
+  overflow-x: auto; overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory; scroll-padding-inline: 2px;
+  padding: 2px 2px 1rem;
+  scrollbar-width: thin; scrollbar-color: var(--line-strong) transparent;
+}
+.carousel:focus-visible { outline-offset: 4px; }
+.carousel > .cert { flex: 0 0 min(340px, 86%); scroll-snap-align: start; }
+
 .cert {
   display: flex; gap: 1rem; align-items: flex-start;
   background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg);
   padding: 1rem; transition: border-color .15s;
 }
 .cert:hover { border-color: var(--line-strong); }
-.cert-wide { grid-column: 1 / -1; }
-.cert-info { min-width: 0; }
+.cert-info { min-width: 0; display: flex; flex-direction: column; }
+.issuer {
+  align-self: flex-start; margin-bottom: .35rem;
+  font-size: var(--text-label); font-weight: 500; letter-spacing: .04em; text-transform: uppercase;
+  color: var(--accent);
+}
 .cert h4 { font-size: .95rem; margin-bottom: .2rem; }
 .cert p { font-size: var(--text-small); color: var(--ink-2); margin-bottom: .6rem; }
 .cert-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .9rem; }
@@ -236,12 +259,6 @@ strong { font-weight: 600; }
   font: 500 .9rem var(--mono);
 }
 
-.in-progress {
-  display: flex; flex-wrap: wrap; align-items: flex-start; gap: .75rem 1rem;
-  margin-top: 2rem; padding: 1rem 1.25rem;
-  border: 1px dashed var(--line-strong); border-radius: var(--radius-lg); background: var(--paper);
-}
-.in-progress ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .25rem; font-size: var(--text-small); color: var(--ink-2); }
 
 /* ---------- Proyectos ---------- */
 .project-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
@@ -266,8 +283,10 @@ strong { font-weight: 600; }
 .site-footer p { margin: 0; }
 
 /* ---------- Visor de certificados ---------- */
+.btn, .link, .nav-links a, .contact-item, .viewer-close { touch-action: manipulation; }
+
 dialog {
-  width: min(100% - 2rem, 900px); max-height: 92vh; padding: 0;
+  width: min(100% - 2rem, 900px); max-height: 92vh; padding: 0; overscroll-behavior: contain;
   border: 1px solid var(--line); border-radius: var(--radius-lg);
   background: var(--paper); color: var(--ink); box-shadow: var(--shadow-overlay);
 }
@@ -302,8 +321,8 @@ dialog::backdrop { background: oklch(23% 0.02 250 / .45); }
   .nav { justify-content: center; }
   .nav-links a { padding: 0 .55rem; }
   .section { padding: 3rem 0; }
-  .cert-grid { grid-template-columns: 1fr; }
   .badge, .file-icon { width: 48px; height: 48px; }
+  .carousel-hint { font-size: var(--text-label); }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -48,10 +48,33 @@ viewer.querySelector(".viewer-close").addEventListener("click", () => viewer.clo
 viewer.addEventListener("click", (e) => { if (e.target === viewer) viewer.close(); });
 viewer.addEventListener("close", () => body.replaceChildren());
 
+// Carrusel de certificados: flechas que avanzan una tarjeta
+const track = document.getElementById("cert-track");
+if (track) {
+  const btns = document.querySelectorAll(".carousel-btn");
+  const step = () => {
+    const card = track.querySelector(".cert");
+    const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+    return card ? card.offsetWidth + gap : track.clientWidth * 0.8;
+  };
+  const smooth = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
+  btns.forEach((b) => b.addEventListener("click", () => {
+    track.scrollBy({ left: Number(b.dataset.dir) * step(), behavior: smooth });
+  }));
+  const update = () => {
+    const max = track.scrollWidth - track.clientWidth - 2;
+    btns[0].disabled = track.scrollLeft <= 2;
+    btns[1].disabled = track.scrollLeft >= max;
+  };
+  track.addEventListener("scroll", () => requestAnimationFrame(update), { passive: true });
+  window.addEventListener("resize", update);
+  update();
+}
+
 // Aparición suave al hacer scroll (se desactiva con reduced motion)
 const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 if (!reduce && "IntersectionObserver" in window) {
-  const items = document.querySelectorAll(".section .section-head, .cert-grid, .project-grid, .about-grid, .contact-list");
+  const items = document.querySelectorAll(".section .section-head, .carousel, .project-grid, .about-grid, .contact-list");
   items.forEach((el) => el.classList.add("reveal"));
   const io = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {

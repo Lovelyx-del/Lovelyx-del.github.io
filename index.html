@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Santiago Cuenca Cabrera · Soporte técnico y atención al cliente</title>
   <meta name="description" content="Santiago Cuenca Cabrera, Técnico en Informática Profesional y Personal: soporte técnico, atención al cliente y redes Cisco. Resistencia, Chaco.">
-  <meta name="theme-color" content="#F7F9FB">
+  <meta name="theme-color" content="#FCFDFE">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -16,7 +16,7 @@
 
   <header class="site-header">
     <nav class="nav container" aria-label="Principal">
-      <a class="brand" href="#inicio">Santiago Cuenca Cabrera</a>
+      <a class="brand" href="#inicio" translate="no">Santiago Cuenca Cabrera</a>
       <ul class="nav-links">
         <li><a href="#sobre-mi">Perfil</a></li>
         <li><a href="#certificaciones">Certificados</a></li>
@@ -33,7 +33,7 @@
         <div class="hero-text">
           <p class="eyebrow">Resistencia, Chaco · Argentina</p>
           <h1>Soporte técnico y atención al cliente, con base en informática y redes.</h1>
-          <p class="hero-lead">Soy <strong>Santiago Cuenca Cabrera</strong>, Técnico en Informática Profesional y Personal (egreso en diciembre de 2026). Diagnostico problemas de PC y de conexión, explico las soluciones con claridad y tengo experiencia real atendiendo al público, en caja y en stock.</p>
+          <p class="hero-lead">Soy <strong>Santiago Cuenca Cabrera</strong>, Técnico en Informática Profesional y Personal. Diagnostico problemas de PC y de conexión, explico las soluciones con claridad y tengo experiencia real atendiendo al público, en caja y en stock.</p>
           <div class="hero-cta">
             <a class="btn btn-primary" href="#contacto">Contactarme</a>
             <a class="btn btn-secondary" href="#certificaciones">Ver certificados</a>
@@ -43,15 +43,14 @@
         <aside class="profile-card" aria-label="Datos rápidos">
           <div class="avatar">
             <!-- Foto: guardá tu imagen como assets/foto-perfil.jpg (cuadrada, ~600 px). Si falta, se muestran las iniciales. -->
-            <img src="assets/foto-perfil.jpg" alt="Foto de perfil de Santiago Cuenca Cabrera" width="96" height="96"
+            <img src="assets/foto-perfil.jpg" alt="Foto de perfil de Santiago Cuenca Cabrera" width="96" height="96" fetchpriority="high"
                  onerror="this.hidden=true; this.nextElementSibling.hidden=false;">
             <span class="avatar-fallback" hidden aria-hidden="true">SC</span>
           </div>
           <dl class="facts">
             <div><dt>Busco</dt><dd>Soporte técnico N1 · Atención al cliente</dd></div>
             <div><dt>Modalidad</dt><dd>Part-time, presencial en Resistencia</dd></div>
-            <div><dt>Formación</dt><dd>E.E.T. N.º 24 · Ing. Electromecánica desde 2027</dd></div>
-            <div><dt>Credenciales</dt><dd>5 de Cisco · Streambe · Google</dd></div>
+            <div><dt>Formación</dt><dd>Técnico en Informática Profesional y Personal (E.E.T. N.º 24)</dd></div>
           </dl>
         </aside>
       </div>
@@ -68,7 +67,7 @@
         <div class="about-grid">
           <div class="about-text">
             <h3>Técnico en Informática Profesional y Personal</h3>
-            <p>Orientación técnica de 6 años de la <strong>E.E.T. N.º 24 "Simón de Iriondo"</strong>, con egreso en diciembre de 2026. Me formó para:</p>
+            <p>Orientación técnica de 6 años de la <strong>E.E.T. N.º 24 “Simón de Iriondo”</strong>. Me formó para:</p>
             <ul class="checklist">
               <li>instalar, mantener y dar soporte a equipos y redes;</li>
               <li>diagnosticar y resolver problemas informáticos;</li>
@@ -119,11 +118,22 @@
           <p class="section-sub">Credenciales verificables. «Ver» abre cada certificado en esta página.</p>
         </header>
 
-        <h3 class="group-title">Redes y soporte <span>Cisco Networking Academy</span></h3>
-        <div class="cert-grid">
+        <div class="carousel-head">
+          <p class="carousel-hint">12 certificados · deslizá o usá las flechas</p>
+          <div class="carousel-controls">
+            <button class="carousel-btn" type="button" data-dir="-1" aria-controls="cert-track" aria-label="Certificados anteriores">
+              <svg viewBox="0 0 24 24" class="icon" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+            </button>
+            <button class="carousel-btn" type="button" data-dir="1" aria-controls="cert-track" aria-label="Certificados siguientes">
+              <svg viewBox="0 0 24 24" class="icon" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="carousel" id="cert-track" role="region" aria-label="Certificados" tabindex="0">
           <article class="cert">
             <img class="badge" src="assets/certs/insignias/network-technician.png" alt="" width="56" height="56" loading="lazy">
             <div class="cert-info">
+              <span class="issuer" translate="no">Cisco</span>
               <h4>Network Technician Career Path</h4>
               <p>Examen de la carrera de Técnico en Redes · nov. 2026</p>
               <div class="cert-actions">
@@ -132,10 +142,10 @@
               </div>
             </div>
           </article>
-
           <article class="cert">
             <img class="badge" src="assets/certs/insignias/network-support-security.png" alt="" width="56" height="56" loading="lazy">
             <div class="cert-info">
+              <span class="issuer" translate="no">Cisco</span>
               <h4>Soporte y Seguridad de Red</h4>
               <p>Network Support and Security · nov. 2026</p>
               <div class="cert-actions">
@@ -144,10 +154,10 @@
               </div>
             </div>
           </article>
-
           <article class="cert">
             <img class="badge" src="assets/certs/insignias/network-addressing.png" alt="" width="56" height="56" loading="lazy">
             <div class="cert-info">
+              <span class="issuer" translate="no">Cisco</span>
               <h4>Direccionamiento de Red y Solución de Problemas Básicos</h4>
               <p>Network Addressing and Basic Troubleshooting · sep. 2026</p>
               <div class="cert-actions">
@@ -156,10 +166,10 @@
               </div>
             </div>
           </article>
-
           <article class="cert">
             <img class="badge" src="assets/certs/insignias/networking-devices.png" alt="" width="56" height="56" loading="lazy">
             <div class="cert-info">
+              <span class="issuer" translate="no">Cisco</span>
               <h4>Dispositivos de Red y Configuración Inicial</h4>
               <p>Networking Devices and Initial Configuration · ago. 2026</p>
               <div class="cert-actions">
@@ -168,10 +178,10 @@
               </div>
             </div>
           </article>
-
           <article class="cert">
             <img class="badge" src="assets/certs/insignias/networking-basics.png" alt="" width="56" height="56" loading="lazy">
             <div class="cert-info">
+              <span class="issuer" translate="no">Cisco</span>
               <h4>Conceptos Básicos de Redes</h4>
               <p>Networking Basics · jul. 2026</p>
               <div class="cert-actions">
@@ -180,13 +190,10 @@
               </div>
             </div>
           </article>
-        </div>
-
-        <h3 class="group-title">Programación con IA <span>Generación T · Streambe</span></h3>
-        <div class="cert-grid">
-          <article class="cert cert-wide">
+          <article class="cert">
             <span class="file-icon" aria-hidden="true">80 h</span>
             <div class="cert-info">
+              <span class="issuer" translate="no">Streambe</span>
               <h4>Programación con IA: Stage 2</h4>
               <p>Trayecto de 80 h en 6 meses, con los 4 módulos aprobados · nov. 2026</p>
               <div class="cert-actions">
@@ -194,10 +201,10 @@
               </div>
             </div>
           </article>
-
           <article class="cert">
             <span class="file-icon" aria-hidden="true">M1</span>
             <div class="cert-info">
+              <span class="issuer" translate="no">Streambe</span>
               <h4>Mod 1 Streambe</h4>
               <p>IA-First: fundamentos de IA · sep. 2026</p>
               <div class="cert-actions">
@@ -205,10 +212,10 @@
               </div>
             </div>
           </article>
-
           <article class="cert">
             <span class="file-icon" aria-hidden="true">M2</span>
             <div class="cert-info">
+              <span class="issuer" translate="no">Streambe</span>
               <h4>Mod 2 Streambe</h4>
               <p>Programación con IA, nivel inicial · sep. 2026</p>
               <div class="cert-actions">
@@ -216,10 +223,10 @@
               </div>
             </div>
           </article>
-
           <article class="cert">
             <span class="file-icon" aria-hidden="true">M3</span>
             <div class="cert-info">
+              <span class="issuer" translate="no">Streambe</span>
               <h4>Mod 3 Streambe</h4>
               <p>Programación con IA, nivel avanzado · oct. 2026</p>
               <div class="cert-actions">
@@ -227,10 +234,10 @@
               </div>
             </div>
           </article>
-
           <article class="cert">
             <span class="file-icon" aria-hidden="true">M4</span>
             <div class="cert-info">
+              <span class="issuer" translate="no">Streambe</span>
               <h4>Mod 4 Streambe</h4>
               <p>Desarrollo de proyectos reales · nov. 2026</p>
               <div class="cert-actions">
@@ -238,13 +245,10 @@
               </div>
             </div>
           </article>
-        </div>
-
-        <h3 class="group-title">Herramientas digitales <span>Google</span></h3>
-        <div class="cert-grid">
           <article class="cert">
             <span class="file-icon" aria-hidden="true">G</span>
             <div class="cert-info">
+              <span class="issuer" translate="no">Google</span>
               <h4>Competencias digitales para profesionales</h4>
               <p>Google Actívate · dic. 2024 · <span class="mono">ID 340520569</span></p>
               <div class="cert-actions">
@@ -252,10 +256,10 @@
               </div>
             </div>
           </article>
-
           <article class="cert">
             <span class="file-icon" aria-hidden="true">G</span>
             <div class="cert-info">
+              <span class="issuer" translate="no">Google</span>
               <h4>Fundamentals of Digital Marketing</h4>
               <p>Google Digital Academy · oct. 2024 · <span class="mono">ID 325905091</span></p>
               <div class="cert-actions">
@@ -263,15 +267,6 @@
               </div>
             </div>
           </article>
-        </div>
-
-        <div class="in-progress">
-          <span class="status status-warn">En curso</span>
-          <ul>
-            <li>Delivering Exceptional Customer Support · HubSpot Academy</li>
-            <li>Automatización Industrial · Schneider Electric University</li>
-            <li>Introducción al Sistema de Riesgos del Trabajo · SRT</li>
-          </ul>
         </div>
       </div>
     </section>
@@ -288,9 +283,9 @@
           <article class="card project">
             <p class="project-type">Comercio · Web</p>
             <h3>Catálogo LibreMax</h3>
-            <p>Catálogo web de la librería donde trabajo: búsqueda, filtros por categoría y alta o edición de productos (~400 artículos).</p>
+            <p>Catálogo web de la librería donde trabajo: búsqueda, filtros por categoría y alta o edición de productos (~400 artículos). La versión pública oculta los precios.</p>
             <ul class="tags"><li>HTML</li><li>CSS</li><li>JavaScript</li></ul>
-            <a class="link" href="libremax/" target="_blank" rel="noopener">Ver demo (sin precios)</a>
+            <a class="link" href="libremax/" target="_blank" rel="noopener">Ver catálogo LibreMax</a>
           </article>
 
           <article class="card project">
@@ -317,13 +312,13 @@
       <div class="container">
         <header class="section-head">
           <h2>Contacto</h2>
-          <p class="section-sub">Escribime por email o por LinkedIn. Respondo en el día.</p>
+          <p class="section-sub">Escribime por email o por LinkedIn.</p>
         </header>
         <ul class="contact-list">
           <li>
-            <a class="card contact-item" href="mailto:santiagoargentote18@gmail.com">
+            <a class="card contact-item" href="mailto:santiagocuencacabrera2007@gmail.com">
               <svg viewBox="0 0 24 24" class="icon" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>
-              <span><strong>Email</strong><small>santiagoargentote18@gmail.com</small></span>
+              <span><strong>Email</strong><small translate="no">santiagocuencacabrera2007@gmail.com</small></span>
             </a>
           </li>
           <li>
